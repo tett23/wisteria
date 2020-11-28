@@ -3,7 +3,7 @@ import { Story, Meta } from '@storybook/react';
 import { FileView, FileViewProps } from 'components/FileView';
 
 export default {
-  title: 'Example/FV',
+  title: 'Example/FileView/FileView',
   component: FileView,
 } as Meta;
 

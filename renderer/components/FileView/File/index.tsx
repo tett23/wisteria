@@ -1,9 +1,7 @@
 import React from 'react';
+import { CFile } from 'models/CFile';
 
-export type FileProps = {
-  filename: string;
-  body: string;
-};
+export type FileProps = CFile;
 
 export function File(props: FileProps) {
   return (
