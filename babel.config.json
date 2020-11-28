@@ -26,6 +26,8 @@
       {
         "alias": {
           "components": "./renderer/components",
+          "models": "./renderer/models",
+          "modules": "./renderer/modules",
           "assets": "./renderer/assets",
           "stories": "./stories"
         }
