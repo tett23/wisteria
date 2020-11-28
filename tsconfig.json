@@ -1,8 +1,9 @@
 {
-  "extends": "../tsconfig.base.json",
+  "extends": "./tsconfig.base.json",
   "compilerOptions": {
     "module": "esnext",
     "noEmit": true,
+    "outDir": "../main",
   },
   "exclude": ["node_modules"],
   "include": ["**/*.ts", "**/*.tsx", "**/*.js"]
