@@ -1,0 +1,34 @@
+{
+  "presets": [
+    [
+      "@babel/preset-typescript",
+      {
+        "isTSX": true,
+        "allExtensions": true,
+        "onlyRemoveTypeImports": true
+      }
+    ],
+    [
+      "@babel/preset-env",
+      {
+        "modules": "auto",
+        "forceAllTransforms": true,
+        "targets": "> 0.25%, not dead",
+        "useBuiltIns": "usage",
+        "corejs": 3
+      }
+    ],
+    "@babel/preset-react"
+  ],
+  "plugins": [
+    [
+      "module-resolver",
+      {
+        "alias": {
+          "components": "./renderer/components",
+          "stories": "./stories"
+        }
+      }
+    ]
+  ]
+}
