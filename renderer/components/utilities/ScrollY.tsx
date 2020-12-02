@@ -5,5 +5,5 @@ export type ScrollYProps = {
 };
 
 export function ScrollY({ children }: ScrollYProps) {
-  return <div className="h-screen overflow-y-scroll">{children}</div>;
+  return <div className="h-scroll h-screen overflow-y-scroll">{children}</div>;
 }

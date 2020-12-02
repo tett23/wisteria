@@ -15,7 +15,12 @@ export function ProjectView({ projects }: ProjectViewProps) {
     </div>
   ));
 
-  return <div className="w-60 resize-x h-scroll">{items}</div>;
+  return (
+    <div className="w-60 resize-x h-scroll m-2">
+      <ProjectDivider></ProjectDivider>
+      {items}
+    </div>
+  );
 }
 
 export function ProjectViewWC() {
@@ -28,4 +33,10 @@ function useProjectViewProps(): ProjectViewProps {
   return {
     projects,
   };
+}
+
+export function ProjectDivider() {
+  return (
+    <div className="tracking-wide text-sm text-gray-700 bold">PROJECTS</div>
+  );
 }
