@@ -1,17 +1,19 @@
-import Link from 'next/link'
-import Layout from '../components/Layout'
+import { VerticalEditor } from 'components/VerticalEditor';
+import Link from 'next/link';
+import Layout from '../components/Layout';
 
 const IndexPage = () => {
   return (
     <Layout title="Home | Next.js + TypeScript + Electron Example">
-      <h1>Hello Next.js 👋</h1>
+      {/* <h1>Hello Next.js 👋</h1>
       <p>
         <Link href="/about">
           <a>About</a>
         </Link>
-      </p>
+      </p> */}
+      <VerticalEditor />
     </Layout>
-  )
-}
+  );
+};
 
-export default IndexPage
+export default IndexPage;
