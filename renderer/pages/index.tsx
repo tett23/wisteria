@@ -1,19 +1,32 @@
 import { VerticalEditor } from 'components/VerticalEditor';
-import Link from 'next/link';
+import { editorBody } from 'modules/editor';
+import React, { useCallback } from 'react';
+import { useRecoilState } from 'recoil';
 import Layout from '../components/Layout';
 
 const IndexPage = () => {
   return (
-    <Layout title="Home | Next.js + TypeScript + Electron Example">
-      {/* <h1>Hello Next.js 👋</h1>
-      <p>
-        <Link href="/about">
-          <a>About</a>
-        </Link>
-      </p> */}
+    <Layout>
       <VerticalEditor />
+      <hr></hr>
+      <TextArea></TextArea>
     </Layout>
   );
 };
 
 export default IndexPage;
+
+function TextArea() {
+  const [content, setContent] = useRecoilState(editorBody);
+  const onChange = useCallback((e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setContent(e.target.value);
+  }, []);
+
+  return (
+    <textarea
+      className="border-2 w-screen h-48"
+      onChange={onChange}
+      value={content ?? ''}
+    ></textarea>
+  );
+}
