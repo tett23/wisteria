@@ -1,0 +1,86 @@
+.previewBackground {
+  background-color: gray;
+  display: flex;
+  justify-content: center;
+}
+
+.outer {
+  width: 80wh;
+  padding: 10vh 0 10vh 0;
+  width: 100wh;
+  margin: auto;
+}
+
+.content-box {
+  margin: auto;
+  height: 84rem;
+  width: 47rem;
+
+  widows: 2;
+  column-count: 2;
+  /* column-width: 47rem; */
+  column-rule: 1px solid black;
+  column-fill: balance;
+  column-gap: 4rem;
+
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  text-combine-upright: digit 2;
+  word-break: break-word;
+  line-break: auto;
+  overflow-wrap: break-word;
+  text-align: justify;
+
+  font-size: 1rem;
+  font-family: serif;
+  white-space: pre-line;
+  line-height: 1.75rem;
+
+  zoom: 100%;
+}
+
+.content-box:focus {
+  outline: none;
+}
+
+.pages {
+  /* writing-mode: vertical-rl; */
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: row-reverse;
+  width: 69rem;
+}
+
+.pageOuter {
+  border: 1px #000 solid;
+  padding: 3rem;
+  background-color: white;
+}
+
+.pageContainer {
+  overflow: hidden;
+}
+
+.page {
+  width: calc((1rem + 0.75rem) * 16);
+  height: 42rem;
+
+  display: flex;
+  flex-direction: row-reverse;
+  position: relative;
+}
+
+.paragraph {
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  text-combine-upright: digit 2;
+  word-break: break-word;
+  line-break: auto;
+  overflow-wrap: break-word;
+  text-align: justify;
+
+  font-size: 1rem;
+  font-family: serif;
+  white-space: pre-line;
+  line-height: 1.75rem;
+}
