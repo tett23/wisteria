@@ -1,6 +1,6 @@
 import { atom } from 'recoil';
 
-export const editorBody = atom<string | null>({
-  key: 'Editor/bodyaaaaa',
+export const editorBody = atom<string>({
+  key: 'Editor/body',
   default: '',
 });
