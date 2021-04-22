@@ -1,6 +1,6 @@
 import React from 'react';
 import { Story, Meta } from '@storybook/react';
-import css from '../renderer/components/VerticalEditor/VerticalEditor.module.css';
+import css from '../renderer/components/Preview/Preview.module.css';
 import { atom, RecoilRoot, useRecoilCallback } from 'recoil';
 
 type DummyParaProps = {
