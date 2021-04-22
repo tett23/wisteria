@@ -23,7 +23,7 @@ export function ProjectView({ projects }: ProjectViewProps) {
   );
 }
 
-export function ProjectViewWC() {
+export function ProjectViewContainer() {
   return <ProjectView {...useProjectViewProps()} />;
 }
 
