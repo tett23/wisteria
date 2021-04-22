@@ -16,7 +16,7 @@ export function ProjectView({ projects }: ProjectViewProps) {
   ));
 
   return (
-    <div className="w-60 resize-x h-scroll m-2">
+    <div className="w-60 h-screen resize-x h-scroll m-2">
       <ProjectDivider></ProjectDivider>
       {items}
     </div>
