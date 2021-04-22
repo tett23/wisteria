@@ -22,7 +22,7 @@ export const TotalContentWidth = selector({
 export const PageSize = selector({
   key: 'Preview/PageSize',
   get: ({ get }) => {
-    return Math.ceil(get(TotalContentWidth) / get(PageWidth));
+    return Math.ceil(get(TotalContentWidth) / get(PageWidth) || 1);
   },
 });
 

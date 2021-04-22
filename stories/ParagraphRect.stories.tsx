@@ -1,7 +1,7 @@
 import React from 'react';
 import { Story, Meta } from '@storybook/react';
 import css from '../renderer/components/VerticalEditor/VerticalEditor.module.css';
-import { atom, RecoilRoot, useRecoilCallback, useRecoilValue } from 'recoil';
+import { atom, RecoilRoot, useRecoilCallback } from 'recoil';
 
 type DummyParaProps = {
   text: string;
@@ -47,7 +47,6 @@ function Sample({ content }: { content: string }) {
     .map((text, idx) => (
       <DummpyPara key={idx + text} idx={idx} text={text} setSize={updater} />
     ));
-  // console.log('sate', paragraphWidths);
 
   return (
     <>

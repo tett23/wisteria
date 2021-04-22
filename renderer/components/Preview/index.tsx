@@ -13,7 +13,7 @@ export function Preview() {
   return (
     <>
       <CalculatePageMetricsContainer />
-      <ScrollY>
+      <ScrollY style={{ height: '70vh', backgroundColor: 'gray' }}>
         <div className={css.previewBackground}>
           <Pages content={content ?? ''} pageSize={pageSize} />
         </div>

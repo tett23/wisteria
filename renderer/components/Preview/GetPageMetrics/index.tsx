@@ -60,13 +60,22 @@ export function CalculatePageMetrics({
     ));
 
   return (
-    <div style={{ position: 'absolute', top: 0, left: 10000 }}>
+    <div
+      style={{
+        visibility: 'hidden',
+        position: 'absolute',
+        top: 0,
+        left: -9999,
+      }}
+    >
       <div className={css.pageOuter}>
-        <div
-          ref={(el) => setPageWidth(el?.clientWidth ?? 1)}
-          className={css.page}
-        >
-          {components}
+        <div className={css.pageContainer}>
+          <div
+            ref={(el) => setPageWidth(el?.clientWidth ?? 1)}
+            className={css.page}
+          >
+            {components}
+          </div>
         </div>
       </div>
     </div>
