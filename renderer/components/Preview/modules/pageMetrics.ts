@@ -70,11 +70,10 @@ function getOffset(
     const offset = master.targetWidth - (prevConsumedWidth + prevPara);
     return [index - 1, offset];
   }
-  if (master.metrics.length === 0) {
+  const [paraWidth, ...tail] = master.metrics;
+  if (paraWidth == null) {
     return [index, 0];
   }
-
-  const [paraWidth, ...tail] = master.metrics;
 
   return getOffset(
     { metrics: tail, targetWidth: master.targetWidth },
@@ -94,11 +93,11 @@ function getEndIndex(
   if (consumeWidth >= pageWidth) {
     return index + 1;
   }
-  if (metrics.length === 0) {
-    return index;
-  }
 
   const [paraWidth, ...tail] = metrics;
+  if (paraWidth == null) {
+    return index;
+  }
 
   return getEndIndex(tail, pageWidth, consumeWidth + paraWidth, index + 1);
 }

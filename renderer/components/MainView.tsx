@@ -15,7 +15,7 @@ export function MainView(_: MainViewProps) {
         direction="vertical"
         style={{ display: 'flex', flexDirection: 'row' }}
       >
-        <div>
+        <div className="h-screen">
           <ScrollY>
             <ProjectViewContainer />
           </ScrollY>
@@ -25,14 +25,15 @@ export function MainView(_: MainViewProps) {
             </div>
           </ScrollY>
         </div>
-        <div>
-          <Resizable direction="horizontal">
+        <div className="h-screen">
+          <Resizable direction="horizontal" style={{ height: '100vh' }}>
             <Preview />
-            <Editor></Editor>
+            <div>
+              <Editor></Editor>
+            </div>
           </Resizable>
         </div>
       </Resizable>
-      <div className="flex flex-row"></div>
     </div>
   );
 }

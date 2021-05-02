@@ -20,8 +20,6 @@ export function Preview({ style }: PreviewProps) {
       <CalculatePageMetricsContainer />
       <ScrollY
         style={{
-          minHeight: '20vh',
-          maxHeight: '70vh',
           backgroundColor: 'gray',
           ...style,
         }}

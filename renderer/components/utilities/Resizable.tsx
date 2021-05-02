@@ -14,17 +14,20 @@ export function Resizable({
   style,
 }: ResizableProps) {
   const [value, onPointerDown] = useProps(direction);
+  const dirProp = direction === 'horizontal' ? 'height' : 'width';
 
   return (
     <div style={style}>
       {React.cloneElement(a, {
-        style: { [direction === 'horizontal' ? 'height' : 'width']: value },
+        style: { [dirProp]: value },
       })}
       <ResizeHandle
         direction={direction}
         onPointerDown={onPointerDown}
       ></ResizeHandle>
-      {React.cloneElement(b)}
+      {React.cloneElement(b, {
+        style: { [dirProp]: `calc(100% - ${value}px)` },
+      })}
     </div>
   );
 }
