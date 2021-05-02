@@ -1,20 +1,31 @@
-type WisteriaConfig = {
-  window: {
-    x: number;
-    y: number;
-    width: number;
-    height: number;
-  };
-  buffer: {
-    content: string;
-  };
-};
+declare module 'messages' {
+  import { Project } from 'models/Project';
 
-type ApiMessage = {
-  readConfig: [{}, WisteriaConfig];
-  saveConfig: [WisteriaConfig, {}];
-};
+  type WisteriaConfig = {
+    window: {
+      x: number;
+      y: number;
+      width: number;
+      height: number;
+    };
+    buffer: {
+      content: string;
+    };
+  };
 
-type ApiActions = keyof ApiMessage;
-type ApiRequest<T extends ApiActions> = ApiMessage[T][0];
-type ApiResponse<T extends ApiActions> = ApiMessage[T][1];
+  type ProjectConfig = {
+    projects: Project[];
+  };
+
+  type ApiMessage = {
+    readConfig: [{}, WisteriaConfig];
+    saveConfig: [WisteriaConfig, {}];
+    openProjectDialog: [{}, Project | null];
+    readProjects: [{}, Project[]];
+    addProject: [{}, {}];
+  };
+
+  type ApiActions = keyof ApiMessage;
+  type ApiRequest<T extends ApiActions> = ApiMessage[T][0];
+  type ApiResponse<T extends ApiActions> = ApiMessage[T][1];
+}

@@ -1,4 +1,4 @@
-import { atom, DefaultValue, selectorFamily } from 'recoil';
+import { atom, DefaultValue, selectorFamily, useRecoilCallback } from 'recoil';
 import { Project } from 'models/Project';
 
 export const projectViewProjects = atom<Project[]>({
@@ -21,3 +21,14 @@ export const projectIsOpenedSelector = selectorFamily({
   },
   get: (id: string) => ({ get }) => get(projectIsOpendStates)[id] ?? false,
 });
+
+export function useAddProject(): (project: Project) => void {
+  return useRecoilCallback(
+    ({ set }) => (project: Project) => {
+      set(projectViewProjects, (current) => {
+        return [...current, project];
+      });
+    },
+    [],
+  );
+}

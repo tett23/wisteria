@@ -1,9 +1,16 @@
 // Native
 import { join } from 'path';
 import { format } from 'url';
+import { Project } from 'models/Project';
 
 // Packages
-import { BrowserWindow, app, ipcMain, IpcMainEvent } from 'electron';
+import {
+  BrowserWindow,
+  app,
+  ipcMain,
+  IpcMainEvent,
+  IpcMainInvokeEvent,
+} from 'electron';
 import isDev from 'electron-is-dev';
 import prepareNext from 'electron-next';
 import installExtension, {
@@ -12,6 +19,14 @@ import installExtension, {
 import { homedir } from 'os';
 import fs from 'fs';
 import { dirname } from 'path';
+import electron from 'electron';
+import {
+  ApiActions,
+  ApiRequest,
+  ApiResponse,
+  ProjectConfig,
+  WisteriaConfig,
+} from 'messages';
 
 // Prepare the renderer once the app is ready
 app.on('ready', async () => {
@@ -58,16 +73,20 @@ ipcMain.on('message', (event: IpcMainEvent, message: any) => {
 ipcMain.handle(
   'message',
   async <T extends ApiActions>(
-    _: any,
+    _: IpcMainInvokeEvent,
     [action, arg]: [T, ApiRequest<T>],
   ): Promise<ApiResponse<T>> => {
-    switch (action) {
+    const a: ApiActions = action;
+    switch (a) {
       case 'readConfig':
         return await readConfig();
       case 'saveConfig':
-        return await saveConfig(arg as ApiRequest<'saveConfig'>);
-      default:
-        throw new Error();
+        return await saveConfig(arg as ApiRequest<typeof a>);
+      case 'openProjectDialog':
+        return await openProjectDialog();
+      case 'addProject':
+      case 'readProjects':
+        return [{ path: '' }];
     }
   },
 );
@@ -108,4 +127,53 @@ async function saveConfig(config: WisteriaConfig) {
     .catch((err: Error) => err);
 
   return {};
+}
+
+async function openProjectDialog(): Promise<Project | null> {
+  const result = await electron.dialog
+    .showOpenDialog(null as any, { properties: ['openDirectory'] })
+    .catch((err: Error) => err);
+  if (result instanceof Error) {
+    return null;
+  }
+
+  const [dir] = result.filePaths;
+  if (dir == null) {
+    return null;
+  }
+  const projects = await readProjects();
+
+  const project = { path: dir };
+  await saveProjectConfig({
+    ...projects,
+    projects: [...projects.projects, project],
+  });
+
+  return project;
+}
+
+async function readProjects(): Promise<ProjectConfig> {
+  const home = homedir();
+  const confPath = join(home, '.config', 'wisteria', 'projects.json');
+
+  const result = await fs.promises
+    .readFile(confPath, 'utf8')
+    .catch((err: Error) => err);
+  if (result instanceof Error) {
+    return { projects: [] };
+  }
+
+  return JSON.parse(result);
+}
+
+async function saveProjectConfig(config: ProjectConfig): Promise<void> {
+  const home = homedir();
+  const confPath = join(home, '.config', 'wisteria', 'projects.json');
+
+  await fs.promises
+    .mkdir(dirname(confPath), { recursive: true })
+    .catch((err: Error) => err);
+  await fs.promises
+    .writeFile(confPath, JSON.stringify(config, null, 2), 'utf8')
+    .catch((err: Error) => err);
 }

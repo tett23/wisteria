@@ -3,6 +3,7 @@ import React, { useEffect } from 'react';
 import 'assets/tailwind.css';
 import { RecoilRoot, useGotoRecoilSnapshot, useRecoilCallback } from 'recoil';
 import { editorBody } from 'modules/editor';
+import { WisteriaConfig } from 'messages';
 
 export default function MyApp({ Component, pageProps }: AppProps) {
   return (

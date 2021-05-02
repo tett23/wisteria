@@ -5,6 +5,7 @@ import { faChevronRight } from '@fortawesome/free-solid-svg-icons/faChevronRight
 import { faChevronDown } from '@fortawesome/free-solid-svg-icons/faChevronDown';
 import { useRecoilState } from 'recoil';
 import { projectIsOpenedSelector } from 'modules/projects';
+import { basename } from 'path';
 
 type OwnProps = {
   project: Project;
@@ -31,7 +32,7 @@ export function ProjectItemWC(props: OwnProps) {
 
 export function useProjectItemProps(props: OwnProps): ProjectItemProps {
   const [opened, setOpened] = useRecoilState(
-    projectIsOpenedSelector(props.project.id),
+    projectIsOpenedSelector(props.project.path),
   );
 
   return {
@@ -61,11 +62,11 @@ type FoldProps = {
   setOpened: (value: boolean) => void;
 };
 
-function Fold({ project: { name }, setOpened }: FoldProps) {
+function Fold({ project: { path }, setOpened }: FoldProps) {
   return (
     <div className="cursor-pointer">
       <FontAwesomeIcon icon={faChevronRight} className="fa-fw" />
-      <span onClick={() => setOpened(true)}>{name}</span>
+      <span onClick={() => setOpened(true)}>{basename(path)}</span>
     </div>
   );
 }
@@ -75,12 +76,12 @@ type UnfoldProps = {
   setOpened: (value: boolean) => void;
 };
 
-function Unfold({ project: { name }, setOpened }: UnfoldProps) {
+function Unfold({ project: { path }, setOpened }: UnfoldProps) {
   return (
     <div>
       <div onClick={() => setOpened(false)} className="cursor-pointer">
         <FontAwesomeIcon icon={faChevronDown} className="fa-fw" />
-        {name}
+        {basename(path)}
       </div>
       <div className="pl-6">
         <ProjectElement type="body" />

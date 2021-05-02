@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-namespace */
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { contextBridge, ipcRenderer, IpcRenderer } from 'electron';
+import { ApiActions, ApiRequest } from 'messages';
 
 declare global {
   namespace NodeJS {

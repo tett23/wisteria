@@ -2,7 +2,7 @@
   "name": "with-electron-typescript",
   "version": "1.0.0",
   "license": "MIT",
-  "main": "main/index.js",
+  "main": "main/electron-src/index.js",
   "productName": "ElectronTypescriptNext",
   "scripts": {
     "clean": "rimraf dist main renderer/out renderer/.next",

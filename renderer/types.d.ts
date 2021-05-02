@@ -99,6 +99,8 @@ type PropType<
 declare module 'electron-devtools-installer';
 
 namespace NodeJS {
+  import { ApiActions, ApiRequest, ApiResponse } from 'messages';
+
   interface Global {
     api: {
       message: <T extends ApiActions>(

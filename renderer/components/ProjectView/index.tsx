@@ -3,6 +3,8 @@ import { useRecoilValue } from 'recoil';
 import { projectViewProjects } from 'modules/projects';
 import { Project } from 'models/Project';
 import { ProjectItemWC } from './ProjectItem';
+import { AddProjectButton } from './AddProjectButton';
+import { basename } from 'path';
 
 export type ProjectViewProps = {
   projects: Project[];
@@ -10,15 +12,20 @@ export type ProjectViewProps = {
 
 export function ProjectView({ projects }: ProjectViewProps) {
   const items = projects.map((item) => (
-    <div key={item.name} className="py-4">
+    <div key={basename(item.path)} className="py-4">
       <ProjectItemWC project={item}></ProjectItemWC>
     </div>
   ));
 
   return (
     <div className="w-60 h-screen resize-x h-scroll m-2">
-      <ProjectDivider></ProjectDivider>
-      {items}
+      <div>
+        <ProjectDivider></ProjectDivider>
+        {items}
+      </div>
+      <div>
+        <AddProjectButton></AddProjectButton>
+      </div>
     </div>
   );
 }

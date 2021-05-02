@@ -20,7 +20,7 @@
     "paths": {
       "*": ["node_modules*"],
       "components*": ["renderer/components*"],
-      "models*": ["renderer/models*"],
+      "models*": ["models*"],
       "modules*": ["renderer/modules*"],
       "assets*": ["renderer/assets*"],
       "stories*": ["stories*"],
