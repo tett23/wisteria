@@ -22,7 +22,7 @@ export function MainView(_: MainViewProps) {
               <ProjectViewContainer />
             </div>
             <div className="border-x">
-              <ScrollY className="h-screen">
+              <ScrollY className="h-screen bg-coolGray-200">
                 <div className="border-x">
                   <FileViewWC />
                 </div>

@@ -19,7 +19,7 @@ export function ProjectView({ projects }: ProjectViewProps) {
   ));
 
   return (
-    <div className="h-screen resize-x h-scroll">
+    <div className="h-screen resize-x h-scroll bg-coolGray-200">
       <ScrollY className="h-screen">
         <div className="m-2">
           <ProjectDivider></ProjectDivider>
