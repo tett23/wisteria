@@ -11,18 +11,24 @@ export type MainViewProps = {};
 export function MainView(_: MainViewProps) {
   return (
     <div className="w-screen h-screen overflow-hidden">
-      <Resizable
-        direction="vertical"
-        style={{ display: 'flex', flexDirection: 'row' }}
-        defaultSize={'20vh'}
-      >
+      <div className="flex">
         <div className="h-screen flex">
-          <ProjectViewContainer />
-          <ScrollY className="h-screen">
+          <Resizable
+            direction="vertical"
+            style={{ display: 'flex', flexDirection: 'row' }}
+            defaultSize={'20vh'}
+          >
             <div className="border-x">
-              <FileViewWC />
+              <ProjectViewContainer />
             </div>
-          </ScrollY>
+            <div className="border-x">
+              <ScrollY className="h-screen">
+                <div className="border-x">
+                  <FileViewWC />
+                </div>
+              </ScrollY>
+            </div>
+          </Resizable>
         </div>
         <div className="h-screen">
           <Resizable
@@ -36,7 +42,7 @@ export function MainView(_: MainViewProps) {
             </div>
           </Resizable>
         </div>
-      </Resizable>
+      </div>
     </div>
   );
 }

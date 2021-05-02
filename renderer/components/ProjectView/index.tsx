@@ -19,7 +19,7 @@ export function ProjectView({ projects }: ProjectViewProps) {
   ));
 
   return (
-    <div className="w-60 h-screen resize-x h-scroll">
+    <div className="h-screen resize-x h-scroll">
       <ScrollY className="h-screen">
         <div className="m-2">
           <ProjectDivider></ProjectDivider>
@@ -33,7 +33,7 @@ export function ProjectView({ projects }: ProjectViewProps) {
 
 function Container() {
   return (
-    <div className="relative bottom-7 left-0 w-full h-7 border-t-2" style={{}}>
+    <div className="relative bottom-7 left-0 w-full h-7 border-t-2">
       <div className="flex justify-start">
         <div className="ml-2">
           <AddProjectButton></AddProjectButton>
