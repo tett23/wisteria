@@ -1,5 +1,5 @@
 import css from '../Preview.module.css';
-import { useRecoilCallback, useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilCallback, useSetRecoilState } from 'recoil';
 import { PageWidth, ParagraphMetrics } from '../modules/pageMetrics';
 import { useCurrentBufferContent } from 'modules/editor';
 import { Paragraph } from '../Paragraph';
