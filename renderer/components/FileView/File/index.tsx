@@ -1,12 +1,24 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { CFile } from 'models/CFile';
 import { basename } from 'path';
+import { useSetRecoilState } from 'recoil';
+import { editorBody } from 'modules/editor';
 
 export type FileProps = CFile;
 
 export function File(props: FileProps) {
+  const setEditorBody = useSetRecoilState(editorBody);
+  const onClick = useCallback(async () => {
+    const file = await global.api.message('readFile', props.path);
+    if (file == null) {
+      return;
+    }
+
+    setEditorBody(file.body);
+  }, []);
+
   return (
-    <div className="h12">
+    <div className="h12 cursor-pointer" onClick={onClick}>
       <FileName filename={props.path}></FileName>
       <Body body={props.body}></Body>
     </div>

@@ -9,7 +9,6 @@ export type FileViewProps = {
 };
 
 export function FileView({ files }: FileViewProps) {
-  console.log(files);
   const items = files.map((item) => (
     <div key={item.path} className="py-4">
       <File {...item}></File>

@@ -89,6 +89,8 @@ ipcMain.handle(
         return await readProjectConfig();
       case 'listDirectoryFiles':
         return listDirectoryFiles(arg as ApiRequest<typeof a>);
+      case 'readFile':
+        return readFile(arg as ApiRequest<typeof a>);
     }
   },
 );
@@ -197,4 +199,18 @@ async function listDirectoryFiles(path: string): Promise<CFile[]> {
   });
 
   return (await Promise.all(ps)).flatMap((v) => v);
+}
+
+async function readFile(path: string): Promise<CFile | null> {
+  const result = await fs.promises
+    .readFile(path, 'utf8')
+    .catch((err: Error) => err);
+  if (result instanceof Error) {
+    return null;
+  }
+
+  return {
+    path,
+    body: result,
+  };
 }
