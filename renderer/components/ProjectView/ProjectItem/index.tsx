@@ -1,11 +1,12 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { Project } from 'models/Project';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronRight } from '@fortawesome/free-solid-svg-icons/faChevronRight';
 import { faChevronDown } from '@fortawesome/free-solid-svg-icons/faChevronDown';
-import { useRecoilState } from 'recoil';
+import { useRecoilState, useSetRecoilState } from 'recoil';
 import { projectIsOpenedSelector } from 'modules/projects';
 import { basename } from 'path';
+import { fileViewFiles } from 'modules/fileView';
 
 type OwnProps = {
   project: Project;
@@ -77,6 +78,12 @@ type UnfoldProps = {
 };
 
 function Unfold({ project: { path }, setOpened }: UnfoldProps) {
+  const setFileViewFiles = useSetRecoilState(fileViewFiles);
+
+  const onClickBody = useCallback(async () => {
+    const result = await global.api.message('listDirectoryFiles', path);
+    setFileViewFiles(result);
+  }, []);
   return (
     <div>
       <div onClick={() => setOpened(false)} className="cursor-pointer">
@@ -84,9 +91,9 @@ function Unfold({ project: { path }, setOpened }: UnfoldProps) {
         {basename(path)}
       </div>
       <div className="pl-6">
-        <ProjectElement type="body" />
-        <ProjectElement type="wiki" />
-        <ProjectElement type="plot" />
+        <ProjectElement type="body" onClick={onClickBody} />
+        <ProjectElement type="wiki" onClick={() => {}} />
+        <ProjectElement type="plot" onClick={() => {}} />
       </div>
     </div>
   );
@@ -94,8 +101,9 @@ function Unfold({ project: { path }, setOpened }: UnfoldProps) {
 
 type ProjectElementProps = {
   type: 'body' | 'wiki' | 'plot';
+  onClick: () => void;
 };
 
-function ProjectElement({ type }: ProjectElementProps) {
-  return <div>{type}</div>;
+function ProjectElement({ type, onClick }: ProjectElementProps) {
+  return <div onClick={onClick}>{type}</div>;
 }

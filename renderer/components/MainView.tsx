@@ -16,7 +16,7 @@ export function MainView(_: MainViewProps) {
         style={{ display: 'flex', flexDirection: 'row' }}
         defaultSize={'20vh'}
       >
-        <div className="h-screen">
+        <div className="h-screen flex">
           <ProjectViewContainer />
           <ScrollY className="h-screen">
             <div className="border-x">

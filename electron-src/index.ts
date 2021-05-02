@@ -27,6 +27,7 @@ import {
   ProjectConfig,
   WisteriaConfig,
 } from 'messages';
+import { CFile } from 'models/CFile';
 
 // Prepare the renderer once the app is ready
 app.on('ready', async () => {
@@ -86,6 +87,8 @@ ipcMain.handle(
         return await openProjectDialog();
       case 'readProjectConfig':
         return await readProjectConfig();
+      case 'listDirectoryFiles':
+        return listDirectoryFiles(arg as ApiRequest<typeof a>);
     }
   },
 );
@@ -175,4 +178,23 @@ async function saveProjectConfig(config: ProjectConfig): Promise<void> {
   await fs.promises
     .writeFile(confPath, JSON.stringify(config, null, 2), 'utf8')
     .catch((err: Error) => err);
+}
+
+async function listDirectoryFiles(path: string): Promise<CFile[]> {
+  const ps = (await fs.promises.readdir(path, 'utf8')).map(async (item) => {
+    const entryPath = join(path, item);
+    const stat = await fs.promises.stat(entryPath);
+    if (stat.isDirectory()) {
+      return [];
+    }
+
+    return [
+      {
+        path: entryPath,
+        body: await fs.promises.readFile(entryPath, 'utf8'),
+      },
+    ];
+  });
+
+  return (await Promise.all(ps)).flatMap((v) => v);
 }

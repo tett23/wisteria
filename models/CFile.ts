@@ -1,4 +1,4 @@
 export type CFile = {
-  filename: string;
+  path: string;
   body: string;
 };

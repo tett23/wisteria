@@ -1,12 +1,13 @@
 import React from 'react';
 import { CFile } from 'models/CFile';
+import { basename } from 'path';
 
 export type FileProps = CFile;
 
 export function File(props: FileProps) {
   return (
     <div className="h12">
-      <FileName filename={props.filename}></FileName>
+      <FileName filename={props.path}></FileName>
       <Body body={props.body}></Body>
     </div>
   );
@@ -17,7 +18,7 @@ type FileNameProps = {
 };
 
 function FileName({ filename }: FileNameProps) {
-  return <div className="font-semibold">{filename}</div>;
+  return <div className="font-semibold">{basename(filename)}</div>;
 }
 
 type BodyProps = {

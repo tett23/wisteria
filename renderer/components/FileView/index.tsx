@@ -9,9 +9,10 @@ export type FileViewProps = {
 };
 
 export function FileView({ files }: FileViewProps) {
+  console.log(files);
   const items = files.map((item) => (
-    <div className="py-4">
-      <File key={item.filename} {...item}></File>
+    <div key={item.path} className="py-4">
+      <File {...item}></File>
     </div>
   ));
 

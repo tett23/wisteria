@@ -1,5 +1,6 @@
 declare module 'messages' {
   import { Project } from 'models/Project';
+  import { CFile } from 'models/CFile';
 
   type WisteriaConfig = {
     window: {
@@ -22,6 +23,7 @@ declare module 'messages' {
     saveConfig: [WisteriaConfig, {}];
     addProject: [{}, Project | null];
     readProjectConfig: [{}, ProjectConfig];
+    listDirectoryFiles: [string, CFile[]];
   };
 
   type ApiActions = keyof ApiMessage;
