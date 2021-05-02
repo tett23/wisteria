@@ -1,4 +1,5 @@
 import React, { CSSProperties, useCallback, useEffect, useState } from 'react';
+import { Properties } from 'csstype';
 
 type ResizeDirection = 'vertical' | 'horizontal';
 
@@ -6,12 +7,14 @@ type ResizableProps = {
   direction: ResizeDirection;
   children: [React.ReactElement, React.ReactElement];
   style?: CSSProperties;
+  defaultSize?: Properties['width'];
 };
 
 export function Resizable({
   direction,
   children: [a, b],
   style,
+  defaultSize,
 }: ResizableProps) {
   const [value, onPointerDown] = useProps(direction);
   const dirProp = direction === 'horizontal' ? 'height' : 'width';
@@ -19,14 +22,14 @@ export function Resizable({
   return (
     <div style={style}>
       {React.cloneElement(a, {
-        style: { [dirProp]: value },
+        style: { [dirProp]: value ?? defaultSize },
       })}
       <ResizeHandle
         direction={direction}
         onPointerDown={onPointerDown}
       ></ResizeHandle>
       {React.cloneElement(b, {
-        style: { [dirProp]: `calc(100% - ${value}px)` },
+        style: { [dirProp]: `calc(100% - ${value ?? defaultSize}px)` },
       })}
     </div>
   );

@@ -14,6 +14,7 @@ export function MainView(_: MainViewProps) {
       <Resizable
         direction="vertical"
         style={{ display: 'flex', flexDirection: 'row' }}
+        defaultSize={'20vh'}
       >
         <div className="h-screen">
           <ScrollY>
@@ -26,7 +27,11 @@ export function MainView(_: MainViewProps) {
           </ScrollY>
         </div>
         <div className="h-screen">
-          <Resizable direction="horizontal" style={{ height: '100vh' }}>
+          <Resizable
+            direction="horizontal"
+            style={{ height: '100vh' }}
+            defaultSize={'80vh'}
+          >
             <Preview />
             <div>
               <Editor></Editor>
