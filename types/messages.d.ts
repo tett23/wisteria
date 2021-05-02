@@ -23,6 +23,7 @@ declare module 'messages' {
     readProjectConfig: [{}, ProjectConfig];
     listDirectoryFiles: [string, CFile[]];
     readFile: [string, CFile | null];
+    listDirectory: [string, CDirectory | null];
   };
 
   type ApiActions = keyof ApiMessage;

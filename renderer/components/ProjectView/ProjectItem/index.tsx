@@ -3,10 +3,12 @@ import { Project } from 'models/Project';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronRight } from '@fortawesome/free-solid-svg-icons/faChevronRight';
 import { faChevronDown } from '@fortawesome/free-solid-svg-icons/faChevronDown';
-import { useRecoilState, useSetRecoilState } from 'recoil';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { projectIsOpenedSelector } from 'modules/projects';
 import { basename } from 'path';
 import { fileViewFiles } from 'modules/fileView';
+import { Foldable } from 'components/utilities/Foldable';
+import { Body } from './Body';
 
 type OwnProps = {
   project: Project;
@@ -14,7 +16,6 @@ type OwnProps = {
 
 type StateProps = {
   opened: boolean;
-  setOpened: (value: boolean) => void;
 };
 
 export type ProjectItemProps = StateProps & OwnProps;
@@ -32,69 +33,73 @@ export function ProjectItemWC(props: OwnProps) {
 }
 
 export function useProjectItemProps(props: OwnProps): ProjectItemProps {
-  const [opened, setOpened] = useRecoilState(
-    projectIsOpenedSelector(props.project.path),
-  );
+  const opened = useRecoilValue(projectIsOpenedSelector(props.project.path));
 
   return {
     ...props,
     opened,
-    setOpened,
   };
 }
 
 type ProjectNameProps = {
   project: Project;
   opened: boolean;
-  setOpened: (value: boolean) => void;
 };
 
-function ProjectName({ opened, project, setOpened }: ProjectNameProps) {
-  switch (opened) {
-    case true:
-      return <Unfold project={project} setOpened={setOpened} />;
-    case false:
-      return <Fold project={project} setOpened={setOpened} />;
-  }
+function ProjectName({ opened, project }: ProjectNameProps) {
+  return (
+    <Foldable
+      isOpen={opened}
+      fold={() => <Fold project={project}></Fold>}
+      unfold={() => <Unfold project={project}></Unfold>}
+      foldContent={() => <FoldContent project={project}></FoldContent>}
+    ></Foldable>
+  );
 }
 
 type FoldProps = {
   project: Project;
-  setOpened: (value: boolean) => void;
 };
 
-function Fold({ project: { path }, setOpened }: FoldProps) {
+function Fold({ project: { path } }: FoldProps) {
   return (
-    <div className="cursor-pointer">
+    <>
       <FontAwesomeIcon icon={faChevronRight} className="fa-fw" />
-      <span onClick={() => setOpened(true)}>{basename(path)}</span>
-    </div>
+      <span>{basename(path)}</span>
+    </>
   );
 }
 
 type UnfoldProps = {
   project: Project;
-  setOpened: (value: boolean) => void;
 };
 
-function Unfold({ project: { path }, setOpened }: UnfoldProps) {
-  const setFileViewFiles = useSetRecoilState(fileViewFiles);
+function Unfold({ project: { path } }: UnfoldProps) {
+  return (
+    <>
+      <FontAwesomeIcon icon={faChevronDown} className="fa-fw" />
+      <span>{basename(path)}</span>
+    </>
+  );
+}
 
+type FoldContentProps = {
+  project: Project;
+};
+
+function FoldContent({ project }: FoldContentProps) {
+  const setFileViewFiles = useSetRecoilState(fileViewFiles);
   const onClickBody = useCallback(async () => {
-    const result = await global.api.message('listDirectoryFiles', path);
+    const result = await global.api.message('listDirectoryFiles', project.path);
     setFileViewFiles(result);
   }, []);
+
   return (
-    <div>
-      <div onClick={() => setOpened(false)} className="cursor-pointer">
-        <FontAwesomeIcon icon={faChevronDown} className="fa-fw" />
-        {basename(path)}
-      </div>
-      <div className="pl-6">
-        <ProjectElement type="body" onClick={onClickBody} />
-        <ProjectElement type="wiki" onClick={() => {}} />
-        <ProjectElement type="plot" onClick={() => {}} />
-      </div>
+    <div className="pl-6">
+      <Body project={project}></Body>
+      <ProjectElement type="body" onClick={onClickBody} />
+      <ProjectElement type="wiki" onClick={() => {}} />
+      <ProjectElement type="plot" onClick={() => {}} />
     </div>
   );
 }
