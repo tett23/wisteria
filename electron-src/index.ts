@@ -9,6 +9,9 @@ import prepareNext from 'electron-next';
 import installExtension, {
   REACT_DEVELOPER_TOOLS,
 } from 'electron-devtools-installer';
+import { homedir } from 'os';
+import fs from 'fs';
+import { dirname } from 'path';
 
 // Prepare the renderer once the app is ready
 app.on('ready', async () => {
@@ -18,14 +21,20 @@ app.on('ready', async () => {
 
   await prepareNext('./renderer');
 
+  const conf = await readConfig();
+
   const mainWindow = new BrowserWindow({
-    width: 800,
-    height: 600,
+    width: conf.window.width,
+    height: conf.window.height,
     webPreferences: {
       nodeIntegration: false,
+      contextIsolation: true,
+      worldSafeExecuteJavaScript: true,
       preload: join(__dirname, 'preload.js'),
     },
   });
+  mainWindow.setPosition(conf.window.x, conf.window.y);
+  mainWindow.webContents.openDevTools();
 
   const url = isDev
     ? 'http://localhost:8000/'
@@ -45,3 +54,58 @@ app.on('window-all-closed', app.quit);
 ipcMain.on('message', (event: IpcMainEvent, message: any) => {
   event.sender.send('message', message);
 });
+
+ipcMain.handle(
+  'message',
+  async <T extends ApiActions>(
+    _: any,
+    [action, arg]: [T, ApiRequest<T>],
+  ): Promise<ApiResponse<T>> => {
+    switch (action) {
+      case 'readConfig':
+        return await readConfig();
+      case 'saveConfig':
+        return await saveConfig(arg as ApiRequest<'saveConfig'>);
+      default:
+        throw new Error();
+    }
+  },
+);
+
+const DefaultConfig: WisteriaConfig = {
+  window: {
+    x: 100,
+    y: 100,
+    width: 800,
+    height: 600,
+  },
+  buffer: {
+    content: '',
+  },
+};
+
+async function readConfig(): Promise<WisteriaConfig> {
+  const home = homedir();
+  const confPath = join(home, '.config', 'wisteria', 'config.json');
+  const result = await fs.promises
+    .readFile(confPath, 'utf8')
+    .catch((err: Error) => err);
+  if (result instanceof Error) {
+    return DefaultConfig;
+  }
+
+  return JSON.parse(result);
+}
+
+async function saveConfig(config: WisteriaConfig) {
+  const home = homedir();
+  const confPath = join(home, '.config', 'wisteria', 'config.json');
+  await fs.promises
+    .mkdir(dirname(confPath), { recursive: true })
+    .catch((err: Error) => err);
+  await fs.promises
+    .writeFile(confPath, JSON.stringify(config, null, 2), 'utf8')
+    .catch((err: Error) => err);
+
+  return {};
+}

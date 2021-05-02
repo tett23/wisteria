@@ -1,6 +1,6 @@
 import React from 'react';
 import { Story, Meta } from '@storybook/react';
-import { ProjectView, ProjectViewWC } from 'components/ProjectView';
+import { ProjectView, ProjectViewContainer } from 'components/ProjectView';
 import { RecoilRoot } from 'recoil';
 import { projectIsOpendStates, projectViewProjects } from 'modules/projects';
 import { initializeState } from 'stories/utils/initializeStates';
@@ -27,12 +27,12 @@ export default {
   component: ProjectView,
 } as Meta;
 
-const Template: Story<PropType<typeof ProjectViewWC>> = () => (
+const Template: Story<PropType<typeof ProjectViewContainer>> = () => (
   <RecoilRoot initializeState={initializeState(InitialStates as any)}>
-    <ProjectViewWC />
+    <ProjectViewContainer />
   </RecoilRoot>
 );
 
 export const Index = Template.bind({});
-const indexArgs: PropType<typeof ProjectViewWC> = {};
+const indexArgs: PropType<typeof ProjectViewContainer> = {};
 Index.args = indexArgs;

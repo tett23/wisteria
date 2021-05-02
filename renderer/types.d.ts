@@ -1,8 +1,6 @@
-type PropType<F extends (...args: any) => any> = Parameters<
-  F
->[0] extends undefined
-  ? {}
-  : Parameters<F>[0];
+type PropType<
+  F extends (...args: any) => any
+> = Parameters<F>[0] extends undefined ? {} : Parameters<F>[0];
 
 // type IsTuple<Tuple extends any[]> = {
 //   empty: true;
@@ -99,3 +97,15 @@ type PropType<F extends (...args: any) => any> = Parameters<
 // const zzz: ZZZ<typeof InitialStates> = InitialStates;
 
 declare module 'electron-devtools-installer';
+
+namespace NodeJS {
+  interface Global {
+    api: {
+      message: <T extends ApiActions>(
+        action: T,
+        arg: ApiRequest<T>,
+      ) => Promise<ApiResponse<T>>;
+      on: (channel: string, callback: (event: any, argv: any) => void) => void;
+    };
+  }
+}

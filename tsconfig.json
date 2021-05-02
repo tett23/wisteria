@@ -3,8 +3,8 @@
   "compilerOptions": {
     "module": "esnext",
     "noEmit": true,
-    "outDir": "../main",
   },
   "exclude": ["node_modules"],
-  "include": ["**/*.ts", "**/*.tsx", "**/*.js"]
+  "files": ["./types/messages.d.ts"],
+  "include": ["**/*.ts", "**/*.tsx", "**/*.js" ]
 }

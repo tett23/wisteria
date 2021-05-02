@@ -47,7 +47,7 @@
     "electron": "^10.1.5",
     "electron-builder": "^22.9.1",
     "electron-devtools-installer": "^3.1.1",
-    "next": "latest",
+    "next": "^10.2.0",
     "postcss": "^8.1.7",
     "postcss-loader": "^4.1.0",
     "recoil": "^0.2.0",

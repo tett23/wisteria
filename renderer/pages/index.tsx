@@ -1,12 +1,12 @@
 import { MainView } from 'components/MainView';
 import Layout from '../components/Layout';
 
-const IndexPage = () => {
+function IndexPage() {
   return (
     <Layout>
       <MainView></MainView>
     </Layout>
   );
-};
+}
 
 export default IndexPage;
