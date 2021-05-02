@@ -102,9 +102,7 @@ const DefaultConfig: WisteriaConfig = {
     width: 800,
     height: 600,
   },
-  buffer: {
-    content: '',
-  },
+  currentBuffer: null,
 };
 
 async function readConfig(): Promise<WisteriaConfig> {

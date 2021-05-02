@@ -2,19 +2,16 @@ import React, { useCallback } from 'react';
 import { CFile } from 'models/CFile';
 import { basename } from 'path';
 import { useSetRecoilState } from 'recoil';
-import { editorBody } from 'modules/editor';
+import { editorCurrentBuffer } from 'modules/editor';
 
 export type FileProps = CFile;
 
 export function File(props: FileProps) {
-  const setEditorBody = useSetRecoilState(editorBody);
+  const setEditorBody = useSetRecoilState(editorCurrentBuffer);
   const onClick = useCallback(async () => {
     const file = await global.api.message('readFile', props.path);
-    if (file == null) {
-      return;
-    }
 
-    setEditorBody(file.body);
+    setEditorBody(file);
   }, []);
 
   return (

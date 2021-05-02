@@ -1,7 +1,7 @@
 import css from '../Preview.module.css';
 import { useRecoilCallback, useRecoilValue, useSetRecoilState } from 'recoil';
 import { PageWidth, ParagraphMetrics } from '../modules/pageMetrics';
-import { editorBody } from 'modules/editor';
+import { useCurrentBufferContent } from 'modules/editor';
 import { Paragraph } from '../Paragraph';
 import { memo, useEffect, useRef } from 'react';
 
@@ -32,7 +32,7 @@ function DummpyPara({ text, idx, setParagraphSize }: DummyParaProps) {
 }
 
 type CalculatePageMetricsProps = {
-  content: string;
+  content: string | null;
   setParagraphSize: (indexWidthPair: [number, number]) => void;
   setPageWidth: (width: number) => void;
 };
@@ -48,7 +48,7 @@ export function CalculatePageMetrics({
   setParagraphSize,
   setPageWidth,
 }: CalculatePageMetricsProps) {
-  const components = content
+  const components = (content ?? '')
     .split('\n')
     .map((text, idx) => (
       <MemoizedDummyPara
@@ -87,7 +87,7 @@ export function CalculatePageMetricsContainer() {
 }
 
 function useCalculatePageMetrics(): CalculatePageMetricsProps {
-  const content = useRecoilValue(editorBody);
+  const content = useCurrentBufferContent();
   const setParagraphSize = useRecoilCallback(
     ({ set }) => ([idx, width]: [number, number]) => {
       set(ParagraphMetrics, (current) => ({ ...current, [idx]: width }));

@@ -1,9 +1,12 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { useRecoilState } from 'recoil';
-import { editorBody } from 'modules/editor';
+import {
+  useCurrentBufferContent,
+  useSetCurrentBufferContent,
+} from 'modules/editor';
 
 export function Editor() {
-  const [content, setContent] = useRecoilState(editorBody);
+  const content = useCurrentBufferContent();
+  const setContent = useSetCurrentBufferContent();
   const onChange = useCallback((e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setContent(e.target.value);
   }, []);
@@ -45,6 +48,7 @@ export function Editor() {
       className="border-2 outline-none"
       style={{ width, height }}
       onChange={onChange}
+      disabled={content == null}
       value={content ?? ''}
     ></textarea>
   );

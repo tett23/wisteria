@@ -1,5 +1,5 @@
 import { ScrollY } from 'components/utilities/ScrollY';
-import { editorBody } from 'modules/editor';
+import { editorCurrentBuffer } from 'modules/editor';
 import { CSSProperties } from 'react';
 import { useRecoilValue } from 'recoil';
 import { CalculatePageMetricsContainer } from './GetPageMetrics';
@@ -12,7 +12,7 @@ type PreviewProps = {
 };
 
 export function Preview({ style }: PreviewProps) {
-  const content = useRecoilValue(editorBody);
+  const buffer = useRecoilValue(editorCurrentBuffer);
   const pageSize = useRecoilValue(PageSize);
 
   return (
@@ -25,7 +25,7 @@ export function Preview({ style }: PreviewProps) {
         }}
       >
         <div className={css.previewBackground}>
-          <Pages content={content ?? ''} pageSize={pageSize} />
+          <Pages content={buffer?.body ?? ''} pageSize={pageSize} />
         </div>
       </ScrollY>
     </div>
