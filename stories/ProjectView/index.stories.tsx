@@ -6,7 +6,10 @@ import { projectIsOpendStates, projectViewProjects } from 'modules/projects';
 import { initializeState } from 'stories/utils/initializeStates';
 
 const InitialStates = [
-  [projectViewProjects, [{ path: '/dir/foo' }, { path: '/dir/bar' }]] as const,
+  [
+    projectViewProjects,
+    Array.from({ length: 100 }).map((_, idx) => ({ path: '/dir/item' + idx })),
+  ],
   [projectIsOpendStates, { foo: true }] as const,
 ];
 

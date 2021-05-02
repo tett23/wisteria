@@ -5,6 +5,7 @@ import { Project } from 'models/Project';
 import { ProjectItemWC } from './ProjectItem';
 import { AddProjectButton } from './AddProjectButton';
 import { basename } from 'path';
+import { ScrollY } from 'components/utilities/ScrollY';
 
 export type ProjectViewProps = {
   projects: Project[];
@@ -18,13 +19,25 @@ export function ProjectView({ projects }: ProjectViewProps) {
   ));
 
   return (
-    <div className="w-60 h-screen resize-x h-scroll m-2">
-      <div>
-        <ProjectDivider></ProjectDivider>
-        {items}
-      </div>
-      <div>
-        <AddProjectButton></AddProjectButton>
+    <div className="w-60 h-screen resize-x h-scroll">
+      <ScrollY className="h-screen">
+        <div className="m-2">
+          <ProjectDivider></ProjectDivider>
+          {items}
+        </div>
+      </ScrollY>
+      <Container></Container>
+    </div>
+  );
+}
+
+function Container() {
+  return (
+    <div className="relative bottom-7 left-0 w-full h-7 border-t-2" style={{}}>
+      <div className="flex justify-start">
+        <div className="ml-2">
+          <AddProjectButton></AddProjectButton>
+        </div>
       </div>
     </div>
   );

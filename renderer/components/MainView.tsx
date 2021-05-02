@@ -17,10 +17,8 @@ export function MainView(_: MainViewProps) {
         defaultSize={'20vh'}
       >
         <div className="h-screen">
-          <ScrollY>
-            <ProjectViewContainer />
-          </ScrollY>
-          <ScrollY>
+          <ProjectViewContainer />
+          <ScrollY className="h-screen">
             <div className="border-x">
               <FileViewWC />
             </div>
