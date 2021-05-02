@@ -20,9 +20,8 @@ declare module 'messages' {
   type ApiMessage = {
     readConfig: [{}, WisteriaConfig];
     saveConfig: [WisteriaConfig, {}];
-    openProjectDialog: [{}, Project | null];
-    readProjects: [{}, Project[]];
-    addProject: [{}, {}];
+    addProject: [{}, Project | null];
+    readProjectConfig: [{}, ProjectConfig];
   };
 
   type ApiActions = keyof ApiMessage;

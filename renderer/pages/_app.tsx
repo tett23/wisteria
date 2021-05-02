@@ -4,6 +4,7 @@ import 'assets/tailwind.css';
 import { RecoilRoot, useGotoRecoilSnapshot, useRecoilCallback } from 'recoil';
 import { editorBody } from 'modules/editor';
 import { WisteriaConfig } from 'messages';
+import { projectViewProjects } from 'modules/projects';
 
 export default function MyApp({ Component, pageProps }: AppProps) {
   return (
@@ -16,7 +17,7 @@ export default function MyApp({ Component, pageProps }: AppProps) {
 
 function Effect() {
   const onUnload = useOnUnload();
-  const u = useStart();
+  const u = useOnMount();
   useEffect(() => {
     u();
     window.addEventListener('unload', onUnload);
@@ -33,13 +34,15 @@ function useOnUnload(): () => Promise<void> {
   };
 }
 
-function useStart(): () => Promise<void> {
+function useOnMount(): () => Promise<void> {
   const gotoSnapshot = useGotoRecoilSnapshot();
   return useRecoilCallback(({ snapshot }) => async () => {
     const conf = await global.api.message('readConfig', {});
+    const projectConf = await global.api.message('readProjectConfig', {});
 
     const next = snapshot.map(({ set }) => {
       set(editorBody, conf.buffer.content);
+      set(projectViewProjects, projectConf.projects);
     });
     gotoSnapshot(next);
   });

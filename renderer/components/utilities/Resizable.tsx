@@ -1,5 +1,4 @@
 import React, { CSSProperties, useCallback, useEffect, useState } from 'react';
-import { Properties } from 'csstype';
 
 type ResizeDirection = 'vertical' | 'horizontal';
 
@@ -7,7 +6,7 @@ type ResizableProps = {
   direction: ResizeDirection;
   children: [React.ReactElement, React.ReactElement];
   style?: CSSProperties;
-  defaultSize?: Properties['width'];
+  defaultSize?: string | number;
 };
 
 export function Resizable({

@@ -7,7 +7,7 @@ export function AddProjectButton() {
   const addProject = useAddProject();
   const onClick = useCallback(async () => {
     const result = await global.api
-      .message('openProjectDialog', {})
+      .message('addProject', {})
       .catch((err: Error) => err);
     if (result instanceof Error || result == null) {
       return;

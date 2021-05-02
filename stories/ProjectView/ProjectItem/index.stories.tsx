@@ -16,8 +16,7 @@ const Template: Story<ProjectItemProps> = (props) => <ProjectItem {...props} />;
 export const Closed = Template.bind({});
 const closedArgs: ProjectItemProps = {
   project: {
-    id: 'foo',
-    name: 'Lorem ipsum',
+    path: '/dir/foo',
   },
   opened: false,
   setOpened: () => {},
@@ -27,8 +26,7 @@ Closed.args = closedArgs;
 export const Opened = Template.bind({});
 const openedArgs: ProjectItemProps = {
   project: {
-    id: 'foo',
-    name: 'Lorem ipsum',
+    path: '/dir/foo',
   },
   opened: true,
   setOpened: () => {},

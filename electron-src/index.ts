@@ -82,11 +82,10 @@ ipcMain.handle(
         return await readConfig();
       case 'saveConfig':
         return await saveConfig(arg as ApiRequest<typeof a>);
-      case 'openProjectDialog':
-        return await openProjectDialog();
       case 'addProject':
-      case 'readProjects':
-        return [{ path: '' }];
+        return await openProjectDialog();
+      case 'readProjectConfig':
+        return await readProjectConfig();
     }
   },
 );
@@ -141,7 +140,7 @@ async function openProjectDialog(): Promise<Project | null> {
   if (dir == null) {
     return null;
   }
-  const projects = await readProjects();
+  const projects = await readProjectConfig();
 
   const project = { path: dir };
   await saveProjectConfig({
@@ -152,7 +151,7 @@ async function openProjectDialog(): Promise<Project | null> {
   return project;
 }
 
-async function readProjects(): Promise<ProjectConfig> {
+async function readProjectConfig(): Promise<ProjectConfig> {
   const home = homedir();
   const confPath = join(home, '.config', 'wisteria', 'projects.json');
 
