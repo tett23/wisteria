@@ -1,4 +1,4 @@
-import React from 'react';
+import { BufferInfoWC } from './BufferInfo';
 import { Editor } from './Editor';
 import { FileViewWC } from './FileView';
 import { Preview } from './Preview';
@@ -31,6 +31,7 @@ export function MainView(_: MainViewProps) {
           </Resizable>
         </div>
         <div className="h-screen">
+          <BufferInfoWC></BufferInfoWC>
           <Resizable
             direction="horizontal"
             style={{ height: '100vh' }}
