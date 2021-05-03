@@ -1,15 +1,23 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
-import {
-  useCurrentBufferContent,
-  useSetCurrentBufferContent,
-} from 'modules/editor';
+import { useEffect, useRef, useState } from 'react';
+import { useEditor } from 'modules/editor/useEditor';
 
 export function Editor() {
-  const content = useCurrentBufferContent();
-  const setContent = useSetCurrentBufferContent();
-  const onChange = useCallback((e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setContent(e.target.value);
-  }, []);
+  const { value, onChange, disabled } = useEditor();
+  const { ref, size } = useSize();
+
+  return (
+    <textarea
+      ref={ref}
+      className="border-2 outline-none"
+      style={size}
+      onChange={onChange}
+      disabled={disabled}
+      value={value}
+    ></textarea>
+  );
+}
+
+function useSize() {
   const ref = useRef<HTMLTextAreaElement | null>(null);
   const [width, setWidth] = useState<number | undefined>(undefined);
   const [height, setHeight] = useState<number | undefined>(undefined);
@@ -42,14 +50,5 @@ export function Editor() {
     };
   }, [ref]);
 
-  return (
-    <textarea
-      ref={ref}
-      className="border-2 outline-none"
-      style={{ width, height }}
-      onChange={onChange}
-      disabled={content == null}
-      value={content ?? ''}
-    ></textarea>
-  );
+  return { ref, size: { width, height } };
 }

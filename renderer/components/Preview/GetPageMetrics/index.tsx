@@ -1,7 +1,7 @@
 import css from '../Preview.module.css';
 import { useRecoilCallback, useSetRecoilState } from 'recoil';
 import { PageWidth, ParagraphMetrics } from '../modules/pageMetrics';
-import { useCurrentBufferContent } from 'modules/editor';
+import { useCurrentBufferContent } from 'modules/editor/useCurrentBufferContent';
 import { Paragraph } from '../Paragraph';
 import { memo, useEffect, useRef } from 'react';
 

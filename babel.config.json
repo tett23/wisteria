@@ -28,6 +28,7 @@
           "components": "./renderer/components",
           "models": "./models",
           "modules": "./renderer/modules",
+          "hooks": "./renderer/hooks",
           "assets": "./renderer/assets",
           "stories": "./stories"
         }
