@@ -7,6 +7,11 @@ export const editorCurrentBuffer = atom<CFile | null>({
   default: null,
 });
 
+export const editorCurrentBufferChanged = atom<boolean>({
+  key: 'Editor/currentBufferChanged',
+  default: false,
+});
+
 export function useCurrentBufferContent(): string | null {
   return useRecoilValue(editorCurrentBuffer)?.body ?? null;
 }

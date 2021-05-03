@@ -17,4 +17,14 @@ UnchangedBufferInfo.args = {
     path: '/foo/bar.md',
     body: 'test',
   },
+  changed: false,
+};
+
+export const ChangedBufferInfo = Template.bind({});
+ChangedBufferInfo.args = {
+  buffer: {
+    path: '/foo/bar.md',
+    body: 'test',
+  },
+  changed: true,
 };
