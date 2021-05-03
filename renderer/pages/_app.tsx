@@ -2,7 +2,10 @@ import { AppProps } from 'next/dist/next-server/lib/router/router';
 import React, { useEffect } from 'react';
 import 'assets/tailwind.css';
 import { RecoilRoot, useGotoRecoilSnapshot, useRecoilCallback } from 'recoil';
-import { editorCurrentBuffer } from 'modules/editor';
+import {
+  editorCurrentBuffer,
+  editorCurrentBufferChanged,
+} from 'modules/editor';
 import { WisteriaConfig } from 'messages';
 import { projectViewProjects } from 'modules/projects';
 
@@ -41,7 +44,8 @@ function useOnMount(): () => Promise<void> {
     const projectConf = await global.api.message('readProjectConfig', {});
 
     const next = snapshot.map(({ set }) => {
-      set(editorCurrentBuffer, conf.currentBuffer);
+      set(editorCurrentBuffer, conf.buffers.current.buffer);
+      set(editorCurrentBufferChanged, conf.buffers.current.changed);
       set(projectViewProjects, projectConf.projects);
     });
     gotoSnapshot(next);
@@ -52,6 +56,7 @@ function useFetchConfig(): () => Promise<WisteriaConfig> {
   return useRecoilCallback(
     ({ snapshot }) => async (): Promise<WisteriaConfig> => {
       const buf = await snapshot.getPromise(editorCurrentBuffer);
+      const bufChanged = await snapshot.getPromise(editorCurrentBufferChanged);
 
       return {
         window: {
@@ -60,7 +65,12 @@ function useFetchConfig(): () => Promise<WisteriaConfig> {
           width: window.innerWidth,
           height: window.innerHeight,
         },
-        currentBuffer: buf,
+        buffers: {
+          current: {
+            buffer: buf,
+            changed: bufChanged,
+          },
+        },
       };
     },
   );

@@ -9,7 +9,12 @@ declare module 'messages' {
       width: number;
       height: number;
     };
-    currentBuffer: CFile | null;
+    buffers: {
+      current: {
+        buffer: CFile | null;
+        changed: boolean;
+      };
+    };
   };
 
   type ProjectConfig = {
