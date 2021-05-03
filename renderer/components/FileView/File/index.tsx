@@ -2,19 +2,65 @@ import React, { useCallback } from 'react';
 import { CFile } from 'models/CFile';
 import { basename } from 'path';
 import { useOpenNewBuffer } from 'modules/editor/useOpenNewBuffer';
+import classNames from 'classnames';
+import { useCurrentBufferPath } from 'modules/editor/useCurrentBufferPath';
 
-export type FileProps = CFile;
+type OwnProps = CFile;
 
-export function File(props: FileProps) {
+export type FileProps = {
+  selected: boolean;
+} & OwnProps;
+
+const Memoized = React.memo(
+  (props: FileProps) => {
+    console.log(props.path, props.selected);
+    return props.selected ? (
+      <SelectedFile {...props} />
+    ) : (
+      <UnselectedFile {...props} />
+    );
+  },
+  (a, b) => a.selected === b.selected && a.body === b.body && a.path === b.path,
+);
+
+export function File(props: OwnProps) {
+  return <Memoized {...useProps(props)}></Memoized>;
+}
+
+function useProps(props: OwnProps): FileProps {
+  const currentBufferPath = useCurrentBufferPath();
+
+  return {
+    ...props,
+    selected: props.path != null && props.path === currentBufferPath,
+  };
+}
+
+function SelectedFile(props: FileProps) {
+  return <FileBase className="bg-white" {...props}></FileBase>;
+}
+
+function UnselectedFile(props: FileProps) {
+  return <FileBase {...props}></FileBase>;
+}
+
+export type FileBaseProps = {
+  className?: string;
+} & OwnProps;
+
+function FileBase(props: FileBaseProps) {
   const open = useOpenNewBuffer();
   const onClick = useCallback(() => {
     open(props.path);
   }, []);
+  const className = classNames('px-2 py-4 hover:bg-white', props.className);
 
   return (
-    <div className="h12 cursor-pointer" onClick={onClick}>
-      <FileName filename={props.path}></FileName>
-      <Body body={props.body}></Body>
+    <div className={className}>
+      <div className="h12 cursor-pointer" onClick={onClick}>
+        <FileName filename={props.path}></FileName>
+        <Body body={props.body}></Body>
+      </div>
     </div>
   );
 }

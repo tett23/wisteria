@@ -11,7 +11,6 @@ import { useCallback } from 'react';
 
 export function useEditor() {
   const buf = useRecoilValue(editorCurrentBuffer);
-  console.log({ buf });
   const makeChanged = useMakeChangedCurrentBuffer();
   const onChange = useCallback((e: React.ChangeEvent<HTMLTextAreaElement>) => {
     makeChanged(e.target.value);
