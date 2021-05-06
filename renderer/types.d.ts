@@ -2,6 +2,11 @@ type PropType<
   F extends (...args: any) => any
 > = Parameters<F>[0] extends undefined ? {} : Parameters<F>[0];
 
+type OmitPropType<
+  F extends (...props: any) => JSX.Element | null,
+  K extends keyof PropType<F>
+> = (props: Omit<PropType<F>, K>) => ReturnType<F>;
+
 // type IsTuple<Tuple extends any[]> = {
 //   empty: true;
 //   nonEmpty: ((...p: Tuple) => any) extends (
