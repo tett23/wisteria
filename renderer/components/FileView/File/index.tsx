@@ -4,6 +4,7 @@ import { basename } from 'path';
 import { useOpenNewBuffer } from 'modules/editor/useOpenNewBuffer';
 import classNames from 'classnames';
 import { useCurrentBufferPath } from 'modules/editor/useCurrentBufferPath';
+import { FileMenu } from './FileMenu';
 
 type OwnProps = CFile;
 
@@ -53,12 +54,18 @@ function FileBase(props: FileBaseProps) {
   const onClick = useCallback(() => {
     open(props.path);
   }, []);
-  const className = classNames('px-2 py-4 hover:bg-white', props.className);
+  const className = classNames(
+    'px-2 py-4 select-none hover:bg-white',
+    props.className,
+  );
 
   return (
     <div className={className}>
       <div className="h12 cursor-pointer" onClick={onClick}>
-        <FileName filename={props.path}></FileName>
+        <div className="flex justify-between">
+          <FileName filename={props.path}></FileName>
+          <FileMenu></FileMenu>
+        </div>
         <Body body={props.body}></Body>
       </div>
     </div>

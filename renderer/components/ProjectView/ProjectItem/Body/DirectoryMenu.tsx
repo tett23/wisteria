@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useBalloon } from 'hooks/useBalloon';
 import React, { useCallback, useRef } from 'react';
 
-export function Menu() {
+export function DirectoryMenu() {
   const { Balloon, BalloonMenu, open } = useBalloon();
   const onClick = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
     e.stopPropagation();

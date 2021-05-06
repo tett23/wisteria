@@ -7,7 +7,7 @@ import { fileViewFiles } from 'modules/fileView';
 import { basename } from 'path';
 import { useCallback, useEffect, useState } from 'react';
 import { useSetRecoilState } from 'recoil';
-import { Menu } from './Menu';
+import { DirectoryMenu } from './DirectoryMenu';
 
 type BodyProps = {
   project: Project;
@@ -32,7 +32,7 @@ function Fold({ path }: FoldProps) {
         <FontAwesomeIcon icon={faFolder} className="fa-fw"></FontAwesomeIcon>
         <span className="ml-1">{basename(path)}</span>
       </div>
-      <Menu></Menu>
+      <DirectoryMenu></DirectoryMenu>
     </div>
   );
 }
@@ -51,7 +51,7 @@ function Unfold({ path }: UnfoldProps) {
         ></FontAwesomeIcon>
         <span className="ml-1">{basename(path)}</span>
       </div>
-      <Menu></Menu>
+      <DirectoryMenu></DirectoryMenu>
     </div>
   );
 }
