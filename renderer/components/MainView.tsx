@@ -1,10 +1,9 @@
 import { BufferInfoWC } from './BufferInfo';
 import { Editor } from './Editor';
-import { FileViewWC } from './FileView';
+import { FileView } from './FileView';
 import { Preview } from './Preview';
 import { ProjectViewContainer } from './ProjectView';
 import { Resizable } from './utilities/Resizable';
-import { ScrollY } from './utilities/ScrollY';
 
 export type MainViewProps = {};
 
@@ -22,11 +21,7 @@ export function MainView(_: MainViewProps) {
               <ProjectViewContainer />
             </div>
             <div className="border-x">
-              <ScrollY className="h-screen bg-coolGray-200">
-                <div className="border-x">
-                  <FileViewWC />
-                </div>
-              </ScrollY>
+              <FileView></FileView>
             </div>
           </Resizable>
         </div>

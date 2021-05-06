@@ -1,4 +1,4 @@
-import { ApiActions, ApiRequest, ApiResponse } from 'messages';
+import type { ApiActions, ApiRequest, ApiResponse } from 'messages';
 import { useCallback } from 'react';
 
 export function useMessageRequester() {

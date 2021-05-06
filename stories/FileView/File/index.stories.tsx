@@ -1,6 +1,7 @@
 import React from 'react';
 import { Story, Meta } from '@storybook/react';
 import { File, FileProps } from 'components/FileView/File';
+import { RecoilRoot } from 'recoil';
 
 export default {
   title: 'Example/FileView/File',
@@ -8,7 +9,11 @@ export default {
   argTypes: {},
 } as Meta;
 
-const Template: Story<FileProps> = (props) => <File {...props} />;
+const Template: Story<FileProps> = (props) => (
+  <RecoilRoot>
+    <File {...props} />
+  </RecoilRoot>
+);
 
 export const LongText = Template.bind({});
 LongText.args = {

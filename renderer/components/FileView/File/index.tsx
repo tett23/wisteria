@@ -14,7 +14,6 @@ export type FileProps = {
 
 const Memoized = React.memo(
   (props: FileProps) => {
-    console.log(props.path, props.selected);
     return props.selected ? (
       <SelectedFile {...props} />
     ) : (
