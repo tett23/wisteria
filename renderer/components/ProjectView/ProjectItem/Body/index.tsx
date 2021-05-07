@@ -3,10 +3,9 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Foldable } from 'components/utilities/Foldable';
 import { CDirectory } from 'models/CFile';
 import { Project } from 'models/Project';
-import { fileViewFiles } from 'modules/fileView';
+import { useSelectDirectory } from 'modules/fileView/useSelectDirectory';
 import { basename } from 'path';
 import { useCallback, useEffect, useState } from 'react';
-import { useSetRecoilState } from 'recoil';
 import { DirectoryMenu } from './DirectoryMenu';
 
 type BodyProps = {
@@ -92,10 +91,9 @@ function FoldContent({ path }: FoldContentProps) {
 }
 
 function Directory({ path }: { path: string }) {
-  const setFileViewFiles = useSetRecoilState(fileViewFiles);
-  const onClick = useCallback(async () => {
-    const result = await global.api.message('listDirectoryFiles', path);
-    setFileViewFiles(result);
+  const selectDirectory = useSelectDirectory();
+  const onClick = useCallback(() => {
+    selectDirectory(path);
   }, []);
 
   return (

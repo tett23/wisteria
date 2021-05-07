@@ -28,6 +28,7 @@ import {
   WisteriaConfig,
 } from 'messages';
 import { CDirectory, CFile, CDirectoryEntry } from 'models/CFile';
+import { WError } from '../models/WError';
 
 // Prepare the renderer once the app is ready
 app.on('ready', async () => {
@@ -91,6 +92,8 @@ ipcMain.handle(
         return listDirectoryFiles(arg as ApiRequest<typeof a>);
       case 'readFile':
         return readFile(arg as ApiRequest<typeof a>);
+      case 'writeFile':
+        return writeFile(arg as ApiRequest<typeof a>);
       case 'listDirectory':
         return listDirectory(arg as ApiRequest<typeof a>);
     }
@@ -218,6 +221,17 @@ async function readFile(path: string): Promise<CFile | null> {
     path,
     body: result,
   };
+}
+
+async function writeFile(file: CFile): Promise<null | WError> {
+  const result = await fs.promises
+    .writeFile(file.path, file.body, 'utf8')
+    .catch((err: Error) => err);
+  if (result instanceof Error) {
+    return WError.from(result);
+  }
+
+  return null;
 }
 
 async function listDirectory(path: string): Promise<CDirectory | null> {
