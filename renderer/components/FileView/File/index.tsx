@@ -63,7 +63,7 @@ function FileBase(props: FileBaseProps) {
       <div className="h12 cursor-pointer" onClick={onClick}>
         <div className="flex justify-between">
           <FileName filename={props.path}></FileName>
-          <FileMenu></FileMenu>
+          <FileMenu path={props.path}></FileMenu>
         </div>
         <Body body={props.body}></Body>
       </div>

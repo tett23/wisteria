@@ -1,6 +1,6 @@
 declare module 'messages' {
   import { Project } from 'models/Project';
-  import { CFile } from 'models/CFile';
+  import { CDirectory, CFile } from 'models/CFile';
   import { WError } from 'models/WError';
 
   type WisteriaConfig = {
@@ -30,7 +30,9 @@ declare module 'messages' {
     listDirectoryFiles: [string, CFile[]];
     readFile: [string, CFile | null];
     writeFile: [CFile, null | WError];
-    listDirectory: [string, CDirectory | null];
+    deleteFile: [string, null | WError];
+    listDirectory: [string, CDirectory | WError];
+    createDirectory: [string, CDirectory | WError];
   };
 
   type ApiActions = keyof ApiMessage;

@@ -1,11 +1,11 @@
 import { faFolder, faFolderOpen } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Foldable } from 'components/utilities/Foldable';
-import { CDirectory } from 'models/CFile';
 import { Project } from 'models/Project';
 import { useSelectDirectory } from 'modules/fileView/useSelectDirectory';
+import { useFetchDirectory } from 'modules/projects/useDirectory';
 import { basename } from 'path';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback } from 'react';
 import { DirectoryMenu } from './DirectoryMenu';
 
 type BodyProps = {
@@ -31,7 +31,7 @@ function Fold({ path }: FoldProps) {
         <FontAwesomeIcon icon={faFolder} className="fa-fw"></FontAwesomeIcon>
         <span className="ml-1">{basename(path)}</span>
       </div>
-      <DirectoryMenu></DirectoryMenu>
+      <DirectoryMenu path={path}></DirectoryMenu>
     </div>
   );
 }
@@ -50,7 +50,7 @@ function Unfold({ path }: UnfoldProps) {
         ></FontAwesomeIcon>
         <span className="ml-1">{basename(path)}</span>
       </div>
-      <DirectoryMenu></DirectoryMenu>
+      <DirectoryMenu path={path}></DirectoryMenu>
     </div>
   );
 }
@@ -60,21 +60,7 @@ type FoldContentProps = {
 };
 
 function FoldContent({ path }: FoldContentProps) {
-  const [dir, setDir] = useState<CDirectory | null>(null);
-  useEffect(() => {
-    (async () => {
-      const item = await global.api.message('listDirectory', path);
-      if (item == null) {
-        return;
-      }
-
-      setDir(item);
-    })();
-  }, []);
-
-  if (dir == null) {
-    return null;
-  }
+  const dir = useFetchDirectory(path);
 
   const items = dir.entries
     .map((item) => {

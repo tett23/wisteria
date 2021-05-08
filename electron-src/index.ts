@@ -94,8 +94,12 @@ ipcMain.handle(
         return readFile(arg as ApiRequest<typeof a>);
       case 'writeFile':
         return writeFile(arg as ApiRequest<typeof a>);
+      case 'deleteFile':
+        return deleteFile(arg as ApiRequest<typeof a>);
       case 'listDirectory':
         return listDirectory(arg as ApiRequest<typeof a>);
+      case 'createDirectory':
+        return createDirectory(arg as ApiRequest<typeof a>);
     }
   },
 );
@@ -234,12 +238,21 @@ async function writeFile(file: CFile): Promise<null | WError> {
   return null;
 }
 
-async function listDirectory(path: string): Promise<CDirectory | null> {
+async function deleteFile(path: string): Promise<null | WError> {
+  const result = await fs.promises.unlink(path).catch((err: Error) => err);
+  if (result instanceof Error) {
+    return WError.from(result);
+  }
+
+  return null;
+}
+
+async function listDirectory(path: string): Promise<CDirectory | WError> {
   const entries = await fs.promises
     .readdir(path, 'utf8')
     .catch((err: Error) => err);
   if (entries instanceof Error) {
-    return null;
+    return WError.from(entries);
   }
 
   const ps = entries.map(
@@ -257,11 +270,22 @@ async function listDirectory(path: string): Promise<CDirectory | null> {
 
   const result = await Promise.all(ps).catch((err: Error) => err);
   if (result instanceof Error) {
-    return null;
+    return WError.from(result);
   }
 
   return {
     path,
     entries: result,
   };
+}
+
+async function createDirectory(path: string): Promise<CDirectory | WError> {
+  const result = await fs.promises
+    .mkdir(path, { recursive: true })
+    .catch((err: Error) => err);
+  if (result instanceof Error) {
+    return WError.from(result);
+  }
+
+  return listDirectory(path);
 }

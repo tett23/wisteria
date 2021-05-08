@@ -1,5 +1,6 @@
 import { atom, DefaultValue, selectorFamily, useRecoilCallback } from 'recoil';
 import { Project } from 'models/Project';
+import { CDirectory } from 'models/CFile';
 
 export const projectViewProjects = atom<Project[]>({
   key: 'ProjectView/project',
@@ -8,6 +9,11 @@ export const projectViewProjects = atom<Project[]>({
 
 export const projectIsOpendStates = atom<Record<string, boolean>>({
   key: 'ProjectView/isOpendStates',
+  default: {},
+});
+
+export const projectDirectories = atom<Record<string, CDirectory>>({
+  key: 'ProjectView/directories',
   default: {},
 });
 
