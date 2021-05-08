@@ -31,7 +31,9 @@ export function useSetDirectory(): (directory: CDirectory) => void {
   }, []);
 }
 
-export function useListDirectory() {
+export function useListDirectory(): (
+  path: string,
+) => Promise<CDirectory | undefined> {
   const requester = useMessageRequester();
   const setDirectory = useSetDirectory();
 
@@ -42,5 +44,7 @@ export function useListDirectory() {
     }
 
     setDirectory(result);
+
+    return result;
   }, []);
 }

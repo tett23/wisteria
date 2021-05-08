@@ -26,10 +26,10 @@ type FoldProps = {
 
 function Fold({ path }: FoldProps) {
   return (
-    <div className="flex justify-between">
-      <div className="flex items-center">
+    <div className="flex justify-between select-none">
+      <div className="flex items-center truncate">
         <FontAwesomeIcon icon={faFolder} className="fa-fw"></FontAwesomeIcon>
-        <span className="ml-1">{basename(path)}</span>
+        <span className="ml-1 truncate">{basename(path)}</span>
       </div>
       <DirectoryMenu path={path}></DirectoryMenu>
     </div>
@@ -42,13 +42,13 @@ type UnfoldProps = {
 
 function Unfold({ path }: UnfoldProps) {
   return (
-    <div className="flex justify-between">
-      <div className="flex items-center">
+    <div className="flex justify-between select-none">
+      <div className="flex items-center truncate">
         <FontAwesomeIcon
           icon={faFolderOpen}
           className="fa-fw"
         ></FontAwesomeIcon>
-        <span className="ml-1">{basename(path)}</span>
+        <span className="ml-1 truncate">{basename(path)}</span>
       </div>
       <DirectoryMenu path={path}></DirectoryMenu>
     </div>
@@ -81,13 +81,18 @@ function Directory({ path }: { path: string }) {
   const onClick = useCallback(() => {
     selectDirectory(path);
   }, []);
+  const FoldWrapper = useCallback(() => <Fold path={path} />, [path]);
+  const UnfoldWrapper = useCallback(() => <Unfold path={path} />, [path]);
+  const FoldContentWrapper = useCallback(() => <FoldContent path={path} />, [
+    path,
+  ]);
 
   return (
     <div className="pl-2">
       <Foldable
-        fold={() => <Fold path={path}></Fold>}
-        unfold={() => <Unfold path={path}></Unfold>}
-        foldContent={() => <FoldContent path={path}></FoldContent>}
+        fold={FoldWrapper}
+        unfold={UnfoldWrapper}
+        foldContent={FoldContentWrapper}
         onClick={onClick}
       ></Foldable>
     </div>

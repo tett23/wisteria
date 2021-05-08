@@ -62,6 +62,6 @@ function useRemoveFile() {
       return;
     }
 
-    setFiles((current) => [...current]);
+    // setFiles((current) => [...current]);
   }, []);
 }

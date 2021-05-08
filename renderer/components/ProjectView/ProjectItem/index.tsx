@@ -22,7 +22,7 @@ export type ProjectItemProps = StateProps & OwnProps;
 
 export function ProjectItem(props: ProjectItemProps) {
   return (
-    <div className="h12">
+    <div className="h12 select-none">
       <ProjectName {...props}></ProjectName>
     </div>
   );
@@ -95,7 +95,7 @@ function FoldContent({ project }: FoldContentProps) {
   }, []);
 
   return (
-    <div className="pl-6">
+    <div className="pl-6 select-none">
       <Body project={project}></Body>
       <ProjectElement type="body" onClick={onClickBody} />
       <ProjectElement type="wiki" onClick={() => {}} />
