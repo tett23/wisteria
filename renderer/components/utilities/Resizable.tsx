@@ -24,7 +24,6 @@ export function Resizable({
   className,
   defaultSize,
 }: ResizableProps) {
-  // const [value, onPointerDown] = useValue(direction);
   const {
     sizes: [aSize, bSize],
     ref,

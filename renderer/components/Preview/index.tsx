@@ -17,7 +17,10 @@ export function Preview({}: PreviewProps) {
       }}
       className="h-full flex justify-center"
     >
-      <div className="flex justify-center" style={{ height: 'fit-content' }}>
+      <div
+        className="flex justify-center py-10"
+        style={{ height: 'fit-content' }}
+      >
         <Pages content={buffer?.body ?? ''} pageSize={pageSize} />
       </div>
     </ScrollY>

@@ -1,6 +1,5 @@
 import { Page } from '../Page';
 import { BlankPage } from '../Page/BlankPage';
-import css from '../Preview.module.css';
 
 export function Pages({
   content,
@@ -11,15 +10,32 @@ export function Pages({
 }) {
   if (pageSize === 0) {
     return (
-      <div className={css.pages}>
+      <div>
         <BlankPage pageNumber={1} />
       </div>
     );
   }
 
-  const pages = Array.from({ length: pageSize }).map((_, i) => {
-    return <Page key={i} pageNumber={i + 1} text={content} />;
-  });
+  const pages = Array.from({ length: pageSize })
+    .reduce<number[][]>((acc, _: any, i) => {
+      if (i % 2 === 0) {
+        acc.push([i]);
+        return acc;
+      }
 
-  return <div className={css.pages}>{pages}</div>;
+      acc[acc.length - 1]?.push(i);
+
+      return acc;
+    }, [])
+    .map((value) => {
+      return (
+        <div key={value.join()} className="flex flex-row-reverse pb-10">
+          {value.map((pageIndex) => (
+            <Page key={pageIndex} pageNumber={pageIndex + 1} text={content} />
+          ))}
+        </div>
+      );
+    });
+
+  return <div>{pages}</div>;
 }

@@ -18,14 +18,28 @@ export function Page({
 
   return (
     <div className={classNames(css.pageOuter, 'select-none')}>
-      <div style={{ fontSize: '0.8rem', marginBottom: '0.5rem' }}>
-        {pageNumber}
-      </div>
+      <PageNumber pageNumber={pageNumber} />
       <div className={css.pageContainer}>
         <div className={css.page} style={{ left: offset }}>
           {paragraphs}
         </div>
       </div>
+    </div>
+  );
+}
+
+function PageNumber({ pageNumber }: { pageNumber: number }) {
+  const className = classNames({
+    'text-left': pageNumber % 2 === 0,
+    'text-right': pageNumber % 2 !== 0,
+  });
+
+  return (
+    <div
+      className={className}
+      style={{ fontSize: '0.8rem', marginBottom: '0.5rem' }}
+    >
+      <span>{pageNumber}</span>
     </div>
   );
 }

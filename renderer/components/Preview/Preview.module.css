@@ -12,7 +12,6 @@
 
   widows: 2;
   column-count: 2;
-  /* column-width: 47rem; */
   column-rule: 1px solid black;
   column-fill: balance;
   column-gap: 4rem;
@@ -35,14 +34,6 @@
 
 .content-box:focus {
   outline: none;
-}
-
-.pages {
-  /* writing-mode: vertical-rl; */
-  display: flex;
-  flex-wrap: wrap;
-  flex-direction: row-reverse;
-  width: 69rem;
 }
 
 .pageOuter {
