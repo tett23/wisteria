@@ -33,6 +33,7 @@ declare module 'messages' {
     deleteFile: [string, null | WError];
     listDirectory: [string, CDirectory | WError];
     createDirectory: [string, CDirectory | WError];
+    removeDirectory: [string, null | WError];
   };
 
   type ApiActions = keyof ApiMessage;

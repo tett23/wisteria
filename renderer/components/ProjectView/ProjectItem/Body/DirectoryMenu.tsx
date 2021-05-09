@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useBalloon } from 'hooks/useBalloon';
 import { useMessageRequester } from 'hooks/useMessageRequester';
 import { useListDirectory } from 'modules/projects/useDirectory';
-import { join } from 'path';
+import { join, dirname } from 'path';
 import React, { useCallback, useRef } from 'react';
 
 type DirectoryMenuProps = {
@@ -16,6 +16,7 @@ export function DirectoryMenu(props: DirectoryMenuProps) {
     BalloonMenu,
     onClick,
     onClickCreateDirectory,
+    onClickRemove,
     ref,
   } = useDirectoryMenu(props);
 
@@ -28,9 +29,7 @@ export function DirectoryMenu(props: DirectoryMenuProps) {
         <BalloonMenu onClick={onClickCreateDirectory}>
           Create directory
         </BalloonMenu>
-        <BalloonMenu onClick={() => {}}>
-          fugafugaaaaaaaaaaaaaaaaaaaaaaaaaa
-        </BalloonMenu>
+        <BalloonMenu onClick={onClickRemove}>Remove directory</BalloonMenu>
         <BalloonMenu onClick={() => {}}>fugafuga</BalloonMenu>
       </Balloon>
     </div>
@@ -48,12 +47,17 @@ function useDirectoryMenu({ path }: DirectoryMenuProps) {
   const onClickCreateDirectory = useCallback(() => {
     createDirectory(path);
   }, [path]);
+  const removeDirectory = useRemoveDirectory();
+  const onClickRemove = useCallback(() => {
+    removeDirectory(path);
+  }, [path]);
 
   return {
     Balloon,
     BalloonMenu,
     onClick,
     onClickCreateDirectory,
+    onClickRemove,
     ref,
   };
 }
@@ -69,5 +73,19 @@ function useCreateDirectory(): (path: string) => Promise<void> {
     }
 
     await listDirectory(path);
+  }, []);
+}
+
+function useRemoveDirectory() {
+  const requester = useMessageRequester();
+  const listDirectory = useListDirectory();
+
+  return useCallback(async (path: string) => {
+    const result = await requester('removeDirectory', path);
+    if (result instanceof Error) {
+      return;
+    }
+
+    await listDirectory(dirname(path));
   }, []);
 }
