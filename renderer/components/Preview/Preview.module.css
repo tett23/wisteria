@@ -1,9 +1,3 @@
-.previewBackground {
-  display: flex;
-  justify-content: center;
-  height: 100%;
-}
-
 .outer {
   width: 80wh;
   padding: 10vh 0 10vh 0;

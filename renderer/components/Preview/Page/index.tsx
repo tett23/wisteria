@@ -1,3 +1,4 @@
+import classNames from 'classnames';
 import { usePageContent } from '../modules/pageMetrics';
 import { Paragraph } from '../Paragraph';
 import css from '../Preview.module.css';
@@ -16,7 +17,7 @@ export function Page({
   ));
 
   return (
-    <div className={css.pageOuter}>
+    <div className={classNames(css.pageOuter, 'select-none')}>
       <div style={{ fontSize: '0.8rem', marginBottom: '0.5rem' }}>
         {pageNumber}
       </div>

@@ -9,6 +9,7 @@ export type ScrollYProps = {
 
 export function ScrollY({ children, style, ...props }: ScrollYProps) {
   const className = classNames('overflow-y-scroll', props.className);
+
   return (
     <div className={className} style={style}>
       {children}

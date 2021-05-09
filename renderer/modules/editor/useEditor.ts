@@ -17,7 +17,7 @@ export function useEditor() {
   }, []);
 
   return {
-    value: buf?.body,
+    file: buf,
     onChange,
     disabled: buf == null,
   };
