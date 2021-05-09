@@ -1,5 +1,9 @@
 import css from '../Preview.module.css';
-import { useRecoilCallback, useSetRecoilState } from 'recoil';
+import {
+  UnwrapRecoilValue,
+  useRecoilCallback,
+  useSetRecoilState,
+} from 'recoil';
 import { PageWidth, ParagraphMetrics } from '../modules/pageMetrics';
 import { useCurrentBufferContent } from 'modules/editor/useCurrentBufferContent';
 import { Paragraph } from '../Paragraph';
@@ -95,6 +99,22 @@ function useCalculatePageMetrics(): CalculatePageMetricsProps {
     [content],
   );
   const setPageWidth = useSetRecoilState(PageWidth);
+  const paraSize = content?.split('\n').length ?? 0;
+  const setParagraphMetrics = useSetRecoilState(ParagraphMetrics);
+  useEffect(() => {
+    setParagraphMetrics((current) => {
+      return Object.entries(current)
+        .sort((a, b) => Number(a[0]) - Number(b[0]))
+        .slice(0, paraSize)
+        .reduce<UnwrapRecoilValue<typeof ParagraphMetrics>>(
+          (acc, [, width], idx) => {
+            acc[idx] = width;
+            return acc;
+          },
+          {},
+        );
+    });
+  }, [paraSize]);
 
   return {
     content,
