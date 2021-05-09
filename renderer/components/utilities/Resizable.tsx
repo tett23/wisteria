@@ -15,6 +15,8 @@ type ResizableProps = {
   style?: CSSProperties;
   className?: string;
   defaultSize?: string | number;
+  minWidth?: string | number;
+  minHeight?: string | number;
 };
 
 export function Resizable({
@@ -23,6 +25,8 @@ export function Resizable({
   style,
   className,
   defaultSize,
+  minWidth,
+  minHeight,
 }: ResizableProps) {
   const {
     sizes: [aSize, bSize],
@@ -32,7 +36,9 @@ export function Resizable({
 
   return (
     <div className={className} style={style} ref={ref}>
-      <div style={aSize}>{React.cloneElement(a)}</div>
+      <div style={{ ...aSize, minWidth, minHeight }}>
+        {React.cloneElement(a)}
+      </div>
       <ResizeHandle direction={direction} onPointerDown={onPointerDown} />
       <div className="w-full h-full" style={bSize}>
         {React.cloneElement(b)}

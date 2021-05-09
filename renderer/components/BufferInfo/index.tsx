@@ -13,7 +13,7 @@ import classNames from 'classnames';
 export const BufferInfo = React.memo(
   ({ buffer, changed }: { buffer: CFile; changed: boolean }) => {
     return (
-      <div className="border-b-2 flex justify-between p-1 text-gray-700">
+      <div className="border-b-2 flex justify-between p-1 text-gray-700 select-none">
         <div className="flex items-baseline">
           <div className="mr-2">
             <FontAwesomeIcon

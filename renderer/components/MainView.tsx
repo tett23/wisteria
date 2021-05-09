@@ -15,6 +15,7 @@ export function MainView(_: MainViewProps) {
         direction="vertical"
         className="w-screen h-screen flex"
         defaultSize="30vw"
+        minWidth="32rem"
       >
         <div className="h-full flex">
           <div className="w-full border-r-2 border-gray-500">
