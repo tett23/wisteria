@@ -1,20 +1,21 @@
 import { useMessageRequester } from 'hooks/useMessageRequester';
-import { fileViewFiles, fileViewSelectedDirectory } from 'modules/fileView';
+import { fileViewFiles } from 'modules/fileView';
 import { useCallback } from 'react';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useSetRecoilState } from 'recoil';
+import { useCurrentDirectory } from './useCurrentDirectory';
 
 export function useReloadFileView() {
-  const selectedDirectory = useRecoilValue(fileViewSelectedDirectory);
+  const currentDirectory = useCurrentDirectory();
   const setFileViewFiles = useSetRecoilState(fileViewFiles);
   const requester = useMessageRequester();
 
   return useCallback(async () => {
-    if (selectedDirectory == null) {
+    if (currentDirectory == null) {
       return;
     }
 
-    const result = await requester('listDirectoryFiles', selectedDirectory);
+    const result = await requester('listDirectoryFiles', currentDirectory);
 
     setFileViewFiles(result);
-  }, [selectedDirectory]);
+  }, [currentDirectory]);
 }

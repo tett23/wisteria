@@ -2,9 +2,9 @@ import { faEllipsisV } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useBalloon } from 'hooks/useBalloon';
 import { useMessageRequester } from 'hooks/useMessageRequester';
-import { fileViewFiles } from 'modules/fileView';
+import { useCurrentDirectory } from 'modules/fileView/useCurrentDirectory';
+import { useReloadFileView } from 'modules/fileView/useReloadFileView';
 import React, { useCallback, useRef } from 'react';
-import { useSetRecoilState } from 'recoil';
 
 type FileMenuProps = {
   path: string;
@@ -54,14 +54,18 @@ function useFileMenu({ path }: FileMenuProps) {
 
 function useRemoveFile() {
   const requester = useMessageRequester();
-  const setFiles = useSetRecoilState(fileViewFiles);
+  const currentDirectory = useCurrentDirectory();
+  const reloadFileView = useReloadFileView();
 
   return useCallback(async (path: string) => {
     const result = await requester('deleteFile', path);
     if (result instanceof Error) {
       return;
     }
+    if (currentDirectory == null) {
+      return;
+    }
 
-    // setFiles((current) => [...current]);
+    reloadFileView();
   }, []);
 }

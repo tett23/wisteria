@@ -5,6 +5,6 @@
     "noEmit": true,
   },
   "exclude": ["node_modules"],
-  "files": ["../types/messages.d.ts", "./components/FileView/FileListHeader.tsx"],
+  "files": ["../types/messages.d.ts"],
   "include": ["**/*.ts", "**/*.tsx", "**/*.js"]
 }
