@@ -1,21 +1,28 @@
 import { useMessageRequester } from 'hooks/useMessageRequester';
 import { fileViewFiles } from 'modules/fileView';
+import { useFetchCurrentDirectory } from 'modules/projects/useFetchCurrentDirecotry';
 import { useCallback } from 'react';
 import { useSetRecoilState } from 'recoil';
-import { useCurrentDirectory } from './useCurrentDirectory';
 
 export function useReloadFileView() {
-  const currentDirectory = useCurrentDirectory();
   const setFileViewFiles = useSetRecoilState(fileViewFiles);
+  const fetchCurrentDirectory = useFetchCurrentDirectory();
   const requester = useMessageRequester();
 
-  return useCallback(async () => {
+  return useCallback(async (path?: string) => {
+    const currentDirectory =
+      path == null ? await fetchCurrentDirectory() : path;
     if (currentDirectory == null) {
       return;
     }
 
     const result = await requester('listDirectoryFiles', currentDirectory);
+    if (result instanceof Error) {
+      return;
+    }
 
-    setFileViewFiles(result);
-  }, [currentDirectory]);
+    const files = Object.fromEntries(result.map((v) => [v.path, v]));
+
+    setFileViewFiles(files);
+  }, []);
 }

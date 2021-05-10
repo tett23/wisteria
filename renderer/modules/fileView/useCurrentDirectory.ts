@@ -1,6 +1,6 @@
 import { useRecoilValue } from 'recoil';
-import { fileViewSelectedDirectory } from './index';
+import { fileViewCurrentDirectory } from './index';
 
 export function useCurrentDirectory(): string | null {
-  return useRecoilValue(fileViewSelectedDirectory);
+  return useRecoilValue(fileViewCurrentDirectory);
 }

@@ -4,7 +4,7 @@ import { useCallback } from 'react';
 import { useMessageRequester } from 'hooks/useMessageRequester';
 import { useRecoilValue } from 'recoil';
 import { join } from 'path';
-import { fileViewSelectedDirectory } from 'modules/fileView';
+import { fileViewCurrentDirectory } from 'modules/fileView';
 import { useReloadFileView } from 'modules/fileView/useReloadFileView';
 
 export function FileListHeader() {
@@ -36,7 +36,7 @@ function AddFileButton() {
 
 function useOnClickAddFile() {
   const requester = useMessageRequester();
-  const selectedDirectory = useRecoilValue(fileViewSelectedDirectory);
+  const selectedDirectory = useRecoilValue(fileViewCurrentDirectory);
   const reloadFileView = useReloadFileView();
 
   const onClick = useCallback(async () => {

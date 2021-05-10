@@ -8,6 +8,7 @@ import {
   editorCurrentBufferChanged,
 } from 'modules/editor';
 import { useCallback } from 'react';
+import { fileViewFiles } from 'modules/fileView';
 
 export function useEditor() {
   const buf = useRecoilValue(editorCurrentBuffer);
@@ -34,6 +35,7 @@ function useMakeChangedCurrentBuffer(): (newValue: string) => Promise<void> {
       const next = map(({ set }) => {
         if (buf != null) {
           set(editorCurrentBuffer, { ...buf, body: newValue });
+          set(fileViewFiles, (current) => ({ ...current, [buf.path]: buf }));
         }
         if (!changed) {
           set(editorCurrentBufferChanged, true);

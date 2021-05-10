@@ -1,12 +1,12 @@
 import { atom } from 'recoil';
 import { CFile } from 'models/CFile';
 
-export const fileViewFiles = atom<CFile[]>({
+export const fileViewFiles = atom<Record<string, CFile>>({
   key: 'FileView/files',
-  default: [],
+  default: {},
 });
 
-export const fileViewSelectedDirectory = atom<string | null>({
-  key: 'FileView/selectedDirectory',
+export const fileViewCurrentDirectory = atom<string | null>({
+  key: 'FileView/currentDirectory',
   default: null,
 });

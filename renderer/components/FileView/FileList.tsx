@@ -1,8 +1,7 @@
 import React from 'react';
-import { useRecoilValue } from 'recoil';
 import { CFile } from 'models/CFile';
-import { fileViewFiles } from 'modules/fileView';
 import { File } from './File';
+import { useFileList } from 'modules/fileView/useFileList';
 
 export type FileListProps = {
   files: CFile[];
@@ -19,7 +18,7 @@ export function FileListWC() {
 }
 
 function useFileListProps(): FileListProps {
-  const files = useRecoilValue(fileViewFiles);
+  const files = useFileList();
 
   return {
     files,

@@ -20,7 +20,7 @@ export function Editor() {
       disabled={disabled}
       defaultValue={file?.body}
       ref={ref}
-    ></textarea>,
+    />,
   ];
 
   return (

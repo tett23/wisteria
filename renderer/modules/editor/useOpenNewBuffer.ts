@@ -1,6 +1,6 @@
 import { CFile } from 'models/CFile';
 import { useCallback } from 'react';
-import { useGotoRecoilSnapshot, useRecoilCallback } from 'recoil';
+import { useSetRecoilState } from 'recoil';
 import {
   editorCurrentBuffer,
   editorCurrentBufferChanged,
@@ -22,16 +22,11 @@ export function useOpenNewBuffer() {
 }
 
 function useOpenFile() {
-  const gotoSnapshot = useGotoRecoilSnapshot();
+  const setBuffer = useSetRecoilState(editorCurrentBuffer);
+  const setChanged = useSetRecoilState(editorCurrentBufferChanged);
 
-  return useRecoilCallback(
-    ({ snapshot }) => (file: CFile) => {
-      const next = snapshot.map(({ set }) => {
-        set(editorCurrentBuffer, file);
-        set(editorCurrentBufferChanged, false);
-      });
-      gotoSnapshot(next);
-    },
-    [],
-  );
+  return useCallback((file: CFile) => {
+    setBuffer(file);
+    setChanged(false);
+  }, []);
 }

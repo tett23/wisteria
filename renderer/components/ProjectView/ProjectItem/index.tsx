@@ -3,12 +3,12 @@ import { Project } from 'models/Project';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronRight } from '@fortawesome/free-solid-svg-icons/faChevronRight';
 import { faChevronDown } from '@fortawesome/free-solid-svg-icons/faChevronDown';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilValue } from 'recoil';
 import { projectIsOpenedSelector } from 'modules/projects';
 import { basename } from 'path';
-import { fileViewFiles } from 'modules/fileView';
 import { Foldable } from 'components/utilities/Foldable';
 import { Body } from './Body';
+import { useSelectDirectory } from 'modules/fileView/useSelectDirectory';
 
 type OwnProps = {
   project: Project;
@@ -88,10 +88,9 @@ type FoldContentProps = {
 };
 
 function FoldContent({ project }: FoldContentProps) {
-  const setFileViewFiles = useSetRecoilState(fileViewFiles);
-  const onClickBody = useCallback(async () => {
-    const result = await global.api.message('listDirectoryFiles', project.path);
-    setFileViewFiles(result);
+  const selectDirectory = useSelectDirectory();
+  const onClickBody = useCallback(() => {
+    selectDirectory(project.path);
   }, []);
 
   return (

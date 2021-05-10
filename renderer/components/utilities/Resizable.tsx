@@ -61,7 +61,6 @@ function useSize({
   useEffect(() => {
     const onResize = () => {
       setWindowSize({ width: window.innerWidth, height: window.innerHeight });
-      console.log({ width: window.innerWidth, height: window.innerHeight });
     };
     window.addEventListener('resize', onResize);
 
