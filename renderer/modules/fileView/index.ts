@@ -10,3 +10,10 @@ export const fileViewCurrentDirectory = atom<string | null>({
   key: 'FileView/currentDirectory',
   default: null,
 });
+
+export type FileState = 'saved' | 'renaming' | 'creating';
+
+export const fileViewFileStates = atom<Record<string, FileState>>({
+  key: 'FileView/fileStates',
+  default: {},
+});

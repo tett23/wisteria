@@ -1,92 +1,37 @@
-import React, { useCallback } from 'react';
 import { CFile } from 'models/CFile';
-import { basename } from 'path';
-import { useOpenNewBuffer } from 'modules/editor/useOpenNewBuffer';
-import classNames from 'classnames';
 import { useCurrentBufferPath } from 'modules/editor/useCurrentBufferPath';
-import { FileMenu } from './FileMenu';
+import { FileState } from 'modules/fileView';
+import { useFileState } from 'modules/fileView/useFileState';
+import { Rename } from './Rename';
+import { Saved } from './Saved';
 
 type OwnProps = CFile;
 
 export type FileProps = {
   selected: boolean;
+  state: FileState;
 } & OwnProps;
 
-const Memoized = React.memo(
-  (props: FileProps) => {
-    return props.selected ? (
-      <SelectedFile {...props} />
-    ) : (
-      <UnselectedFile {...props} />
-    );
-  },
-  (a, b) => a.selected === b.selected && a.body === b.body && a.path === b.path,
-);
-
 export function File(props: OwnProps) {
-  return <Memoized {...useProps(props)}></Memoized>;
+  const a = useProps(props);
+
+  switch (a.state) {
+    case 'saved':
+      return <Saved {...a} />;
+    case 'renaming':
+      return <Rename {...a} />;
+    default:
+      throw new Error();
+  }
 }
 
 function useProps(props: OwnProps): FileProps {
   const currentBufferPath = useCurrentBufferPath();
+  const state = useFileState(props.path);
 
   return {
     ...props,
     selected: props.path != null && props.path === currentBufferPath,
+    state,
   };
-}
-
-function SelectedFile(props: FileProps) {
-  return <FileBase className="bg-white" {...props}></FileBase>;
-}
-
-function UnselectedFile(props: FileProps) {
-  return <FileBase {...props}></FileBase>;
-}
-
-export type FileBaseProps = {
-  className?: string;
-} & OwnProps;
-
-function FileBase(props: FileBaseProps) {
-  const open = useOpenNewBuffer();
-  const onClick = useCallback(() => {
-    open(props.path);
-  }, []);
-  const className = classNames(
-    'px-2 py-4 select-none hover:bg-white',
-    props.className,
-  );
-
-  return (
-    <div className={className}>
-      <div className="h12 cursor-pointer" onClick={onClick}>
-        <div className="flex justify-between">
-          <FileName filename={props.path}></FileName>
-          <FileMenu path={props.path}></FileMenu>
-        </div>
-        <Body body={props.body}></Body>
-      </div>
-    </div>
-  );
-}
-
-type FileNameProps = {
-  filename: string;
-};
-
-function FileName({ filename }: FileNameProps) {
-  return <div className="font-semibold">{basename(filename)}</div>;
-}
-
-type BodyProps = {
-  body: string;
-};
-
-function Body({ body }: BodyProps) {
-  return (
-    <div className="text-gray-400 min-h-12 max-h-12 overflow-hidden break-all">
-      {body}
-    </div>
-  );
 }

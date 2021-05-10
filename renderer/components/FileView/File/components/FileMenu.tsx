@@ -1,19 +1,26 @@
 import { faEllipsisV } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { useBalloon } from 'hooks/useBalloon';
+import { BalloonType, useBalloon } from 'hooks/useBalloon';
 import { useMessageRequester } from 'hooks/useMessageRequester';
+import { fileViewFileStates } from 'modules/fileView';
 import { useCurrentDirectory } from 'modules/fileView/useCurrentDirectory';
 import { useReloadFileView } from 'modules/fileView/useReloadFileView';
 import React, { useCallback, useRef } from 'react';
+import { useSetRecoilState } from 'recoil';
 
 type FileMenuProps = {
   path: string;
 };
 
 export function FileMenu(props: FileMenuProps) {
-  const { Balloon, BalloonMenu, ref, onClick, onClickRemove } = useFileMenu(
-    props,
-  );
+  const {
+    Balloon,
+    BalloonMenu,
+    ref,
+    onClick,
+    onClickRemove,
+    onClickRename,
+  } = useFileMenu(props);
 
   return (
     <div>
@@ -22,16 +29,23 @@ export function FileMenu(props: FileMenuProps) {
       </div>
       <Balloon parentRef={ref}>
         <BalloonMenu onClick={onClickRemove}>Remove</BalloonMenu>
-        <BalloonMenu onClick={() => {}}>
-          fugafugaaaaaaaaaaaaaaaaaaaaaaaaaa
-        </BalloonMenu>
+        <BalloonMenu onClick={onClickRename}>Rename</BalloonMenu>
         <BalloonMenu onClick={() => {}}>fugafuga</BalloonMenu>
       </Balloon>
     </div>
   );
 }
 
-function useFileMenu({ path }: FileMenuProps) {
+function useFileMenu({
+  path,
+}: FileMenuProps): {
+  Balloon: BalloonType['Balloon'];
+  BalloonMenu: BalloonType['BalloonMenu'];
+  onClick: (e: React.MouseEvent<HTMLDivElement>) => void;
+  ref: React.RefObject<HTMLDivElement>;
+  onClickRemove: () => void;
+  onClickRename: () => void;
+} {
   const { Balloon, BalloonMenu, open } = useBalloon();
   const onClick = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
     e.stopPropagation();
@@ -42,6 +56,10 @@ function useFileMenu({ path }: FileMenuProps) {
   const onClickRemove = useCallback(() => {
     removeFile(path);
   }, []);
+  const renameFile = useRenameFile();
+  const onClickRename = useCallback(() => {
+    renameFile(path);
+  }, []);
 
   return {
     Balloon,
@@ -49,6 +67,7 @@ function useFileMenu({ path }: FileMenuProps) {
     onClick,
     ref,
     onClickRemove,
+    onClickRename,
   };
 }
 
@@ -67,5 +86,13 @@ function useRemoveFile() {
     }
 
     reloadFileView();
+  }, []);
+}
+
+function useRenameFile() {
+  const setFileStates = useSetRecoilState(fileViewFileStates);
+
+  return useCallback(async (path: string) => {
+    setFileStates((current) => ({ ...current, [path]: 'renaming' }));
   }, []);
 }

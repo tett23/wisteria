@@ -96,6 +96,8 @@ ipcMain.handle(
         return writeFile(arg as ApiRequest<typeof a>);
       case 'deleteFile':
         return deleteFile(arg as ApiRequest<typeof a>);
+      case 'renameFile':
+        return renameFile(arg as ApiRequest<typeof a>);
       case 'listDirectory':
         return listDirectory(arg as ApiRequest<typeof a>);
       case 'createDirectory':
@@ -242,6 +244,21 @@ async function writeFile(file: CFile): Promise<null | WError> {
 
 async function deleteFile(path: string): Promise<null | WError> {
   const result = await fs.promises.unlink(path).catch((err: Error) => err);
+  if (result instanceof Error) {
+    return WError.from(result);
+  }
+
+  return null;
+}
+
+async function renameFile({
+  src,
+  dst,
+}: {
+  src: string;
+  dst: string;
+}): Promise<null | WError> {
+  const result = await fs.promises.rename(src, dst).catch((err: Error) => err);
   if (result instanceof Error) {
     return WError.from(result);
   }

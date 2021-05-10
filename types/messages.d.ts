@@ -31,6 +31,7 @@ declare module 'messages' {
     readFile: [string, CFile | null];
     writeFile: [CFile, null | WError];
     deleteFile: [string, null | WError];
+    renameFile: [{ src: string; dst: string }, null | WError];
     listDirectory: [string, CDirectory | WError];
     createDirectory: [string, CDirectory | WError];
     removeDirectory: [string, null | WError];
