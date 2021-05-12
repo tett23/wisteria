@@ -9,6 +9,7 @@ import {
 } from 'modules/editor';
 import { useCallback } from 'react';
 import { fileViewFiles } from 'modules/fileView';
+import { useDebouncedCallback } from 'use-debounce';
 
 export function useEditor() {
   const buf = useRecoilValue(editorCurrentBuffer);
@@ -16,10 +17,11 @@ export function useEditor() {
   const onChange = useCallback((e: React.ChangeEvent<HTMLTextAreaElement>) => {
     makeChanged(e.target.value);
   }, []);
+  const debounced = useDebouncedCallback(onChange, 2000);
 
   return {
     file: buf,
-    onChange,
+    onChange: debounced,
     disabled: buf == null,
   };
 }
