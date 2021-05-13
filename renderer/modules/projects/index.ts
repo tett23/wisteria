@@ -1,4 +1,4 @@
-import { atom, DefaultValue, selectorFamily, useRecoilCallback } from 'recoil';
+import { atom, DefaultValue, selectorFamily } from 'recoil';
 import { Project } from 'models/Project';
 import { CDirectory } from 'models/CFile';
 
@@ -28,13 +28,9 @@ export const projectIsOpenedSelector = selectorFamily({
   get: (id: string) => ({ get }) => get(projectIsOpendStates)[id] ?? false,
 });
 
-export function useAddProject(): (project: Project) => void {
-  return useRecoilCallback(
-    ({ set }) => (project: Project) => {
-      set(projectViewProjects, (current) => {
-        return [...current, project];
-      });
-    },
-    [],
-  );
-}
+export type FileState = 'saved' | 'renaming' | 'creating';
+
+export const projectDirectoryStates = atom<Record<string, FileState>>({
+  key: 'ProjectView/directoryStates',
+  default: {},
+});

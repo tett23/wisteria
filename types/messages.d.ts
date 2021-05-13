@@ -35,6 +35,7 @@ declare module 'messages' {
     listDirectory: [string, CDirectory | WError];
     createDirectory: [string, CDirectory | WError];
     removeDirectory: [string, null | WError];
+    renameDirectory: [{ src: string; dst: string }, null | WError];
   };
 
   type ApiActions = keyof ApiMessage;

@@ -23,11 +23,16 @@ export function useBalloon(): BalloonType {
     [isOpen],
   );
   const BalloonMenuWrapper = useCallback(
-    (props: PropType<BalloonType['BalloonMenu']>) => {
+    ({ onClick, ...props }: PropType<BalloonType['BalloonMenu']>) => {
       return React.createElement(BalloonMenu, {
         ...props,
         onClick: () => {
-          props.onClick();
+          if (props.disabled) {
+            close();
+            return;
+          }
+
+          onClick();
           close();
         },
       });

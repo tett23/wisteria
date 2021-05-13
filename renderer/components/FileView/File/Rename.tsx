@@ -1,7 +1,7 @@
 import { useMessageRequester } from 'hooks/useMessageRequester';
 import { fileViewFiles, fileViewFileStates } from 'modules/fileView';
 import { basename, dirname, join } from 'path';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useHotkeys } from 'react-hotkeys-hook';
 import { useSetRecoilState } from 'recoil';
 import { Body } from './components/Body';
@@ -43,11 +43,11 @@ function useFormProps(path: string) {
   const setFileStates = useSetRecoilState(fileViewFileStates);
   const setFiles = useSetRecoilState(fileViewFiles);
   const save = useCallback(async () => {
-    if (filename.length === 0) {
+    const newPath = join(dirname(path), filename);
+    if (filename.length === 0 || newPath === path) {
       return;
     }
 
-    const newPath = join(dirname(path), filename);
     const result = await requester('renameFile', {
       src: path,
       dst: newPath,
@@ -70,6 +70,13 @@ function useFormProps(path: string) {
     { enableOnTags: ['INPUT'] },
     [save],
   );
+  useEffect(() => {
+    if (ref.current == null) {
+      return;
+    }
+
+    ref.current.focus();
+  }, [ref]);
 
   return {
     ref,

@@ -85,18 +85,25 @@ function useClassName() {
   return className;
 }
 
+export type BalloonMenuPropsOmitChildren = Omit<
+  PropType<typeof BalloonMenu>,
+  'children'
+>;
+
 export function BalloonMenu({
   children,
   ...props
 }: {
   children: React.ReactNode;
   onClick: () => void;
+  disabled?: boolean;
 }) {
   const onClick = useCallback((e: React.MouseEvent) => {
     e.stopPropagation();
     props.onClick();
   }, []);
 
+  // TODO: disabledの見た目実装する
   return (
     <div
       className="px-2 py-1 hover:bg-gray-500 cursor-pointer select-none"

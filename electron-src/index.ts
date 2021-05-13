@@ -104,6 +104,8 @@ ipcMain.handle(
         return createDirectory(arg as ApiRequest<typeof a>);
       case 'removeDirectory':
         return removeDirectory(arg as ApiRequest<typeof a>);
+      case 'renameDirectory':
+        return renameDirectory(arg as ApiRequest<typeof a>);
     }
   },
 );
@@ -311,6 +313,21 @@ async function createDirectory(path: string): Promise<CDirectory | WError> {
 
 async function removeDirectory(path: string): Promise<null | WError> {
   const result = fs.promises.rmdir(path).catch((err: Error) => err);
+  if (result instanceof Error) {
+    return WError.from(result);
+  }
+
+  return null;
+}
+
+async function renameDirectory({
+  src,
+  dst,
+}: {
+  src: string;
+  dst: string;
+}): Promise<null | WError> {
+  const result = await fs.promises.rename(src, dst).catch((err: Error) => err);
   if (result instanceof Error) {
     return WError.from(result);
   }
