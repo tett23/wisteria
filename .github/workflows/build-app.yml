@@ -12,5 +12,5 @@ jobs:
       - run: yarn run pack-app
       - uses: actions/upload-artifact@v2
         with:
-          name: build-${{ env.GITHUB_SHA }}
+          name: build-${{ github.sha }}
           path: dist
