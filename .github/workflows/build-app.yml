@@ -9,7 +9,7 @@ jobs:
         with:
           node-version: '14'
       - run: yarn install
-      - run: yarn run dist
+      - run: yarn run pack-app
       - uses: actions/upload-artifact@v2
         with:
           name: build-${{ env.GITHUB_SHA }}
