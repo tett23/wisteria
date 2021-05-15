@@ -26,5 +26,7 @@
       "assets*": ["renderer/assets*"],
       "stories*": ["stories*"],
     }
-  }
+  },
+  "exclude": ["node_modules", "tmp", "dist", "main", "renderer/.next/", "renderer/out/", "out"],
+  "include": ["**/*.ts", "**/*.tsx", "**/*.js"]
 }
