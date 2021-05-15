@@ -9,7 +9,7 @@ jobs:
         with:
           node-version: '14'
       - run: yarn install
-      - run: yarn run pack-app:x86-mac
+      - run: yarn run pack-app:x64-mac
       - uses: actions/upload-artifact@v2
         with:
           name: build-${{ github.sha }}

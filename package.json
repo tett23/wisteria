@@ -9,7 +9,7 @@
     "build-renderer": "next build renderer && next export renderer",
     "build-electron": "tsc -p electron-src",
     "build": "npm run build-renderer && npm run build-electron",
-    "pack-app:x86-mac": "npm run build && electron-builder --dir --mac --x64",
+    "pack-app:x64-mac": "npm run build && electron-builder --dir --mac --x64",
     "dist": "npm run build && electron-builder",
     "type-check": "tsc",
     "storybook": "start-storybook -p 6006",
