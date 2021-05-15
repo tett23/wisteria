@@ -13,9 +13,6 @@ import {
 } from 'electron';
 import isDev from 'electron-is-dev';
 import prepareNext from 'electron-next';
-import installExtension, {
-  REACT_DEVELOPER_TOOLS,
-} from 'electron-devtools-installer';
 import { homedir } from 'os';
 import fs from 'fs';
 import { dirname } from 'path';
@@ -32,9 +29,12 @@ import { WError } from '../models/WError';
 
 // Prepare the renderer once the app is ready
 app.on('ready', async () => {
-  installExtension(REACT_DEVELOPER_TOOLS)
-    .then((name: any) => console.log(`Added Extension:  ${name}`))
-    .catch((err: any) => console.log('An error occurred: ', err));
+  if (isDev) {
+    const { default: installExtension, REACT_DEVELOPER_TOOLS } = await import(
+      'electron-devtools-installer'
+    );
+    await installExtension(REACT_DEVELOPER_TOOLS).catch((err: Error) => err);
+  }
 
   await prepareNext('./renderer');
 
@@ -51,12 +51,14 @@ app.on('ready', async () => {
     },
   });
   mainWindow.setPosition(conf.window.x, conf.window.y);
-  mainWindow.webContents.openDevTools();
+  if (isDev) {
+    mainWindow.webContents.openDevTools();
+  }
 
   const url = isDev
     ? 'http://localhost:8000/'
     : format({
-        pathname: join(__dirname, '../renderer/out/index.html'),
+        pathname: join(__dirname, '../../renderer/out/index.html'),
         protocol: 'file:',
         slashes: true,
       });
