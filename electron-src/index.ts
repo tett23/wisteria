@@ -161,7 +161,11 @@ async function readConfig(): Promise<WisteriaConfig> {
     return DefaultConfig;
   }
 
-  return JSON.parse(result);
+  console.log('result', result);
+
+  return await (async () => JSON.parse(result))()
+    .catch((err: Error) => err)
+    .then(() => DefaultConfig);
 }
 
 async function saveConfig(config: WisteriaConfig) {
