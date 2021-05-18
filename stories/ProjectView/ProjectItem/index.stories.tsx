@@ -19,7 +19,6 @@ const closedArgs: ProjectItemProps = {
     path: '/dir/foo',
   },
   opened: false,
-  setOpened: () => {},
 };
 Closed.args = closedArgs;
 
@@ -29,6 +28,5 @@ const openedArgs: ProjectItemProps = {
     path: '/dir/foo',
   },
   opened: true,
-  setOpened: () => {},
 };
 Opened.args = openedArgs;
