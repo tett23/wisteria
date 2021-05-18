@@ -27,6 +27,19 @@ import {
 import { CDirectory, CFile, CDirectoryEntry } from 'models/CFile';
 import { WError } from '../models/WError';
 
+electron.protocol.registerSchemesAsPrivileged([
+  {
+    scheme: 'workers',
+    privileges: {
+      standard: true,
+      secure: true,
+      allowServiceWorkers: true,
+      supportFetchAPI: true,
+      corsEnabled: true,
+    },
+  },
+]);
+
 // Prepare the renderer once the app is ready
 app.on('ready', async () => {
   if (isDev) {
@@ -40,6 +53,15 @@ app.on('ready', async () => {
 
   const conf = await readConfig();
 
+  const session = electron.session.defaultSession;
+  session.protocol.registerFileProtocol('workers', (request, callback) => {
+    const url = new URL(request.url);
+
+    callback({
+      path: join(__dirname, 'workers', url.host),
+    });
+  });
+
   const mainWindow = new BrowserWindow({
     width: conf.window.width,
     height: conf.window.height,
@@ -47,6 +69,8 @@ app.on('ready', async () => {
       nodeIntegration: false,
       contextIsolation: true,
       worldSafeExecuteJavaScript: true,
+      nativeWindowOpen: true,
+      nodeIntegrationInWorker: true,
       preload: join(__dirname, 'preload.js'),
     },
   });
