@@ -4,6 +4,7 @@ import 'assets/tailwind.css';
 import { RecoilRoot } from 'recoil';
 import { useConfig } from '../hooks/useConfig';
 import { useRestoreFromConfig } from 'hooks/useRestoreFromConfig';
+import { useMessageRequester } from 'hooks/useMessageRequester';
 
 export default function MyApp({ Component, pageProps }: AppProps) {
   return (
@@ -38,8 +39,9 @@ function Effect() {
 
 function useOnUnload(): () => Promise<void> {
   const fetchConfig = useConfig();
+  const requester = useMessageRequester();
 
   return async () => {
-    global.api.message('saveConfig', await fetchConfig());
+    requester('saveConfig', await fetchConfig());
   };
 }

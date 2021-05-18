@@ -34,13 +34,13 @@ export function usePageContent(page: number): PageContentReturn {
     return acc;
   }, []);
 
-  const [startLineIndex, offset] = getOffset(
-    { metrics: items, targetWidth: (page - 1) * pageWidth },
-    0,
-    0,
-    0,
-    0,
-  );
+  const [startLineIndex, offset] = getOffset({
+    master: { metrics: items, targetWidth: (page - 1) * pageWidth },
+    consumedWidth: 0,
+    index: 0,
+    prevPara: 0,
+    prevConsumedWidth: 0,
+  });
 
   const endLineIndex = getEndIndex(
     items.slice(startLineIndex),
@@ -56,13 +56,19 @@ type PageContentReturn = [[number, number], number];
 
 type LineIndexOffsetPair = [number, number];
 
-function getOffset(
-  master: { readonly metrics: number[]; readonly targetWidth: number },
-  consumedWidth: number,
-  index: number,
-  prevPara: number,
-  prevConsumedWidth: number,
-): LineIndexOffsetPair {
+function getOffset({
+  master,
+  consumedWidth,
+  index,
+  prevPara,
+  prevConsumedWidth,
+}: {
+  master: { readonly metrics: number[]; readonly targetWidth: number };
+  consumedWidth: number;
+  index: number;
+  prevPara: number;
+  prevConsumedWidth: number;
+}): LineIndexOffsetPair {
   if (consumedWidth === master.targetWidth) {
     return [index, 0];
   }
@@ -75,13 +81,13 @@ function getOffset(
     return [index, 0];
   }
 
-  return getOffset(
-    { metrics: tail, targetWidth: master.targetWidth },
-    consumedWidth + paraWidth,
-    index + 1,
+  return getOffset({
+    master: { metrics: tail, targetWidth: master.targetWidth },
+    consumedWidth: consumedWidth + paraWidth,
+    index: index + 1,
     prevPara,
-    consumedWidth,
-  );
+    prevConsumedWidth: consumedWidth,
+  });
 }
 
 function getEndIndex(

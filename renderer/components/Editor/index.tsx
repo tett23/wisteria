@@ -1,5 +1,7 @@
+import { editorCursorParagraphIndex } from 'modules/editor';
 import { useEditor } from 'modules/editor/useEditor';
-import { useCallback, useRef } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
+import { useSetRecoilState } from 'recoil';
 
 export function Editor() {
   const { file, onChange, disabled } = useEditor();
@@ -11,6 +13,22 @@ export function Editor() {
 
     ref.current.focus();
   }, [ref.current]);
+  const setParaIndex = useSetRecoilState(editorCursorParagraphIndex);
+
+  useEffect(() => {
+    if (ref.current == null || file == null) {
+      return;
+    }
+    console.log('selection statr', ref.current?.selectionStart);
+
+    const a = file.body.slice(0, ref.current.selectionStart);
+    const paraCount = Array.from<null>({ length: a.length }).reduce(
+      (acc, _, idx) => (a[idx] === '\n' ? acc + 1 : acc),
+      0,
+    );
+    setParaIndex(paraCount);
+  }, [ref, file?.body]);
+
   const elem = [
     <textarea
       key={file?.path ?? 'none'}

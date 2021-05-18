@@ -1,5 +1,7 @@
 import classNames from 'classnames';
+import { editorCursorParagraphIndex } from 'modules/editor';
 import { useEffect, useRef, useState } from 'react';
+import { useRecoilValue } from 'recoil';
 import { usePageContent } from '../modules/pageMetrics';
 import { Paragraph } from '../Paragraph';
 import css from '../Preview.module.css';
@@ -54,6 +56,17 @@ function usePageProps({
       observer.disconnect();
     };
   }, [ref]);
+  const paraIndex = useRecoilValue(editorCursorParagraphIndex) ?? 0;
+  const isIncludePara = startIndex <= paraIndex && paraIndex <= endIndex;
+  useEffect(() => {
+    if (!isIncludePara) {
+      return;
+    }
+    console.log('scroll', ref.current);
+
+    ref.current?.scrollTo({ top: -100 });
+  }, [isIncludePara]);
+
   const lines = text.split('\n').slice(startIndex, endIndex);
   const paragraphs = lines.map((l, i) => (
     <Paragraph key={i + l} text={l}></Paragraph>
