@@ -19,6 +19,7 @@
     "classnames": "^2.3.1",
     "electron-is-dev": "^1.1.0",
     "electron-next": "^3.1.5",
+    "promise-worker": "^2.0.1",
     "react": "^17.0.0",
     "react-dom": "^17.0.0",
     "react-hotkeys-hook": "^3.3.1",
