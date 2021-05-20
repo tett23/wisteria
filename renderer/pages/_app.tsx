@@ -22,7 +22,7 @@ function Effect() {
     restore();
     window.addEventListener('unload', onUnload);
     (async () => {
-      const workerResource = await fetch('workers://sample.js');
+      const workerResource = await fetch('workers://workers/sample.js');
 
       const sampleWorker = new Worker(
         URL.createObjectURL(await workerResource.blob()),
