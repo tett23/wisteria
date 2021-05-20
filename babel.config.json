@@ -30,6 +30,7 @@
           "modules": "./renderer/modules",
           "hooks": "./renderer/hooks",
           "assets": "./renderer/assets",
+          "workers": "./workers",
           "stories": "./stories"
         }
       }
