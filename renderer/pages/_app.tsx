@@ -21,17 +21,6 @@ function Effect() {
   useEffect(() => {
     restore();
     window.addEventListener('unload', onUnload);
-    (async () => {
-      const workerResource = await fetch('workers://workers/sample.js');
-
-      const sampleWorker = new Worker(
-        URL.createObjectURL(await workerResource.blob()),
-      );
-      sampleWorker.postMessage('ping');
-      sampleWorker.addEventListener('message', (mes) => {
-        console.log(mes);
-      });
-    })();
   }, []);
 
   return null;
