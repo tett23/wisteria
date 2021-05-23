@@ -1,12 +1,24 @@
 import { usePages } from 'modules/preview/usePages';
-import { Page } from '../Page';
+import { MemoizedPage } from '../Page';
 
 export function Pages({ content }: { content: string }) {
   const pages = usePages();
+  const lines = content.split('\n');
 
-  const items = pages.map((props, idx) => (
-    <Page key={idx} pageNumber={idx + 1} text={content} {...props} />
-  ));
+  const items = pages.map((props, idx) => {
+    const paragraphs = lines.slice(
+      props.blockIndex.start,
+      props.blockIndex.end + 1,
+    );
+    return (
+      <MemoizedPage
+        key={idx}
+        pageNumber={idx + 1}
+        source={paragraphs}
+        {...props}
+      />
+    );
+  });
   const items2 = splitEach(items).flatMap(([a, b]) => [b, a]);
 
   return (
