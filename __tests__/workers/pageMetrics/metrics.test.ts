@@ -25,7 +25,7 @@ describe('pageMetrics', () => {
   function splitEach(arr: Uint16Array, count: number = 3) {
     return arr.reduce<Array<number[]>>((acc, v, idx) => {
       const pos = Math.floor(idx / count);
-      if (idx % 3 === 0) {
+      if (idx % count === 0) {
         acc[pos] = [];
       }
 

@@ -1,32 +1,28 @@
+import { usePages } from 'modules/preview/usePages';
 import { Page } from '../Page';
 
-export function Pages({
-  content,
-  pageSize,
-}: {
-  content: string;
-  pageSize: number;
-}) {
-  const pages = Array.from({ length: pageSize })
-    .reduce<number[][]>((acc, _: any, i) => {
-      if (i % 2 === 0) {
-        acc.push([i]);
-        return acc;
-      }
+export function Pages({ content }: { content: string }) {
+  const pages = usePages();
 
-      acc[acc.length - 1]?.push(i);
+  const items = pages.map((props, idx) => (
+    <Page key={idx} pageNumber={idx + 1} text={content} {...props} />
+  ));
+  const items2 = splitEach(items).flatMap(([a, b]) => [b, a]);
 
-      return acc;
-    }, [])
-    .map((value) => {
-      return (
-        <div key={value.join()} className="flex flex-row-reverse pb-10">
-          {value.map((pageIndex) => (
-            <Page key={pageIndex} pageNumber={pageIndex + 1} text={content} />
-          ))}
-        </div>
-      );
-    });
+  return (
+    <div className="grid grid-flow-row grid-cols-2 gap-y-10">{items2}</div>
+  );
+}
 
-  return <div>{pages}</div>;
+function splitEach<T>(arr: Array<T>) {
+  return arr.reduce<Array<T[]>>((acc, v, idx) => {
+    const pos = Math.floor(idx / 2);
+    if (acc[pos] == null) {
+      acc[pos] = [];
+    }
+
+    acc[pos]?.push(v);
+
+    return acc;
+  }, []);
 }
