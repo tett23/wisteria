@@ -1,15 +1,15 @@
 import { ScrollY } from 'components/utilities/ScrollY';
 import { editorCurrentBuffer } from 'modules/editor';
-import { useCalcPageMetrics } from 'modules/preview';
+import { useCalcPageMetrics } from 'modules/preview/useCalcPageMetrics';
+import { usePageSize } from 'modules/preview/usePageSize';
 import { useRecoilValue } from 'recoil';
-import { PageSize } from './modules/pageMetrics';
 import { Pages } from './Pages';
 
 type PreviewProps = {};
 
 export function Preview({}: PreviewProps) {
   const buffer = useRecoilValue(editorCurrentBuffer);
-  const pageSize = useRecoilValue(PageSize);
+  const pageSize = usePageSize();
   useCalcPageMetrics();
 
   return (

@@ -1,5 +1,4 @@
 import { Page } from '../Page';
-import { BlankPage } from '../Page/BlankPage';
 
 export function Pages({
   content,
@@ -8,14 +7,6 @@ export function Pages({
   content: string;
   pageSize: number;
 }) {
-  if (pageSize === 0) {
-    return (
-      <div>
-        <BlankPage pageNumber={1} />
-      </div>
-    );
-  }
-
   const pages = Array.from({ length: pageSize })
     .reduce<number[][]>((acc, _: any, i) => {
       if (i % 2 === 0) {

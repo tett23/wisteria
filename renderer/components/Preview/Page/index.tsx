@@ -1,8 +1,8 @@
 import classNames from 'classnames';
 import { editorCursorParagraphIndex } from 'modules/editor';
+import { usePreviewPage } from 'modules/preview/usePreviewPage';
 import { useEffect, useRef, useState } from 'react';
 import { useRecoilValue } from 'recoil';
-import { usePageContent } from '../modules/pageMetrics';
 import { Paragraph } from '../Paragraph';
 import css from '../Preview.module.css';
 import { BlankPage } from './BlankPage';
@@ -34,7 +34,10 @@ function usePageProps({
   pageNumber: number;
   text: string;
 }) {
-  const [[startIndex, endIndex], offset] = usePageContent(pageNumber);
+  const {
+    offset,
+    blockIndex: { start, end },
+  } = usePreviewPage(pageNumber);
   const [isIntersecting, setIsIntersecting] = useState(false);
   const ref = useRef<HTMLDivElement | null>(null);
   useEffect(() => {
@@ -57,17 +60,16 @@ function usePageProps({
     };
   }, [ref]);
   const paraIndex = useRecoilValue(editorCursorParagraphIndex) ?? 0;
-  const isIncludePara = startIndex <= paraIndex && paraIndex <= endIndex;
+  const isIncludePara = start <= paraIndex && paraIndex <= end;
   useEffect(() => {
     if (!isIncludePara) {
       return;
     }
-    console.log('scroll', ref.current);
 
     ref.current?.scrollTo({ top: -100 });
   }, [isIncludePara]);
 
-  const lines = text.split('\n').slice(startIndex, endIndex);
+  const lines = text.split('\n').slice(start, end + 1);
   const paragraphs = lines.map((l, i) => (
     <Paragraph key={i + l} text={l}></Paragraph>
   ));
