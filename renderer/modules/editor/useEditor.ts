@@ -14,9 +14,13 @@ import { useDebouncedCallback } from 'use-debounce';
 export function useEditor() {
   const buf = useRecoilValue(editorCurrentBuffer);
   const makeChanged = useMakeChangedCurrentBuffer();
-  const onChange = useCallback((e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    makeChanged(e.target.value);
-  }, []);
+
+  const onChange = useCallback(
+    async (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+      makeChanged(e.target.value);
+    },
+    [],
+  );
   const debounced = useDebouncedCallback(onChange, 2000);
 
   return {

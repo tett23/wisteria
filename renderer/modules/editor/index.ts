@@ -10,3 +10,8 @@ export const editorCurrentBufferChanged = atom<boolean>({
   key: 'Editor/currentBufferChanged',
   default: false,
 });
+
+export const editorCursorParagraphIndex = atom<number | null>({
+  key: 'Editor/cursorParagraphIndex ',
+  default: null,
+});

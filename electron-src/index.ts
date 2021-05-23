@@ -55,10 +55,12 @@ app.on('ready', async () => {
 
   const session = electron.session.defaultSession;
   session.protocol.registerFileProtocol('workers', (request, callback) => {
+    console.log('request.url', request.url);
     const url = new URL(request.url);
+    console.log('url', url);
 
     callback({
-      path: join(__dirname, 'workers', url.host),
+      path: join(dirname(__dirname), 'workers', url.pathname),
     });
   });
 
@@ -161,7 +163,14 @@ async function readConfig(): Promise<WisteriaConfig> {
     return DefaultConfig;
   }
 
-  return JSON.parse(result);
+  const conf = await (async () => JSON.parse(result))().catch(
+    (err: Error) => err,
+  );
+  if (conf instanceof Error) {
+    return DefaultConfig;
+  }
+
+  return conf;
 }
 
 async function saveConfig(config: WisteriaConfig) {

@@ -4,7 +4,7 @@ import {
   useRecoilCallback,
   useSetRecoilState,
 } from 'recoil';
-import { PageWidth, ParagraphMetrics } from '../modules/pageMetrics';
+import { previewPageWidth, previewBlocks } from 'modules/preview';
 import { useCurrentBufferContent } from 'modules/editor/useCurrentBufferContent';
 import { Paragraph } from '../Paragraph';
 import { memo, useEffect, useRef } from 'react';
@@ -93,20 +93,19 @@ export function CalculatePageMetricsContainer() {
 function useCalculatePageMetrics(): CalculatePageMetricsProps {
   const content = useCurrentBufferContent();
   const setParagraphSize = useRecoilCallback(
-    ({ set }) => ([idx, width]: [number, number]) => {
-      set(ParagraphMetrics, (current) => ({ ...current, [idx]: width }));
-    },
+    ({ set }) => ([idx, width]: [number, number]) =>
+      set(previewBlocks, (current) => ({ ...current, [idx]: width })),
     [content],
   );
-  const setPageWidth = useSetRecoilState(PageWidth);
+  const setPageWidth = useSetRecoilState(previewPageWidth);
   const paraSize = content?.split('\n').length ?? 0;
-  const setParagraphMetrics = useSetRecoilState(ParagraphMetrics);
+  const setParagraphMetrics = useSetRecoilState(previewBlocks);
   useEffect(() => {
     setParagraphMetrics((current) => {
       return Object.entries(current)
         .sort((a, b) => Number(a[0]) - Number(b[0]))
         .slice(0, paraSize)
-        .reduce<UnwrapRecoilValue<typeof ParagraphMetrics>>(
+        .reduce<UnwrapRecoilValue<typeof previewBlocks>>(
           (acc, [, width], idx) => {
             acc[idx] = width;
             return acc;

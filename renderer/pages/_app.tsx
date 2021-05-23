@@ -4,6 +4,7 @@ import 'assets/tailwind.css';
 import { RecoilRoot } from 'recoil';
 import { useConfig } from '../hooks/useConfig';
 import { useRestoreFromConfig } from 'hooks/useRestoreFromConfig';
+import { useMessageRequester } from 'hooks/useMessageRequester';
 
 export default function MyApp({ Component, pageProps }: AppProps) {
   return (
@@ -20,17 +21,6 @@ function Effect() {
   useEffect(() => {
     restore();
     window.addEventListener('unload', onUnload);
-    (async () => {
-      const workerResource = await fetch('workers://sample.js');
-
-      const sampleWorker = new Worker(
-        URL.createObjectURL(await workerResource.blob()),
-      );
-      sampleWorker.postMessage('ping');
-      sampleWorker.addEventListener('message', (mes) => {
-        console.log(mes);
-      });
-    })();
   }, []);
 
   return null;
@@ -38,8 +28,9 @@ function Effect() {
 
 function useOnUnload(): () => Promise<void> {
   const fetchConfig = useConfig();
+  const requester = useMessageRequester();
 
   return async () => {
-    global.api.message('saveConfig', await fetchConfig());
+    requester('saveConfig', await fetchConfig());
   };
 }
