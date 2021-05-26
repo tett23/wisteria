@@ -1,5 +1,5 @@
 import { useRecoilValue, useSetRecoilState } from 'recoil';
-import { useEffect, useMemo } from 'react';
+import { useCallback, useEffect } from 'react';
 import PromiseWorker from 'promise-worker';
 import { previewBlocks, previewPageWidth, previewPages } from './index';
 
@@ -9,16 +9,17 @@ export function useCalcPageMetrics() {
   const pageWidth = useRecoilValue(previewPageWidth);
   const setPreviewPages = useSetRecoilState(previewPages);
   const blocksLength = blocks.reduce((acc, v) => acc + v, 0);
-  const worker = useMemo(() => workerGen(), []);
+  const requester = useProcessMessage<
+    {
+      pageWidth: number;
+      blocks: number[];
+    },
+    Uint16Array
+  >();
 
   useEffect(() => {
     (async () => {
-      const metrics = await (
-        await worker.next()
-      ).value.postMessage<Uint16Array>({
-        pageWidth,
-        blocks,
-      });
+      const metrics = await requester({ pageWidth, blocks });
       const pages = splitEach(Array.from(metrics), 3).map(
         ([start, end, offset]: any) => ({
           offset,
@@ -30,6 +31,17 @@ export function useCalcPageMetrics() {
       setPreviewPages(pages);
     })();
   }, [blocksLength, pageWidth]);
+}
+
+function useProcessMessage<T, R>(): (message: T) => Promise<R> {
+  return useCallback(async (message: T) => {
+    const { done, value } = await workerGen().next();
+    if (done) {
+      throw new Error();
+    }
+
+    return await value.postMessage(message);
+  }, []);
 }
 
 async function* workerGen(): AsyncGenerator<

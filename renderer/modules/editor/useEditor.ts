@@ -21,7 +21,7 @@ export function useEditor() {
     },
     [],
   );
-  const debounced = useDebouncedCallback(onChange, 2000);
+  const debounced = useDebouncedCallback(onChange, 500);
 
   return {
     file: buf,
