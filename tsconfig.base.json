@@ -24,6 +24,7 @@
       "modules*": ["renderer/modules*"],
       "hooks*": ["renderer/hooks*"],
       "assets*": ["renderer/assets*"],
+      "asyncActions*": ["renderer/asyncActions*"],
       "workers*": ["workers*"],
       "stories*": ["stories*"],
     }
