@@ -1,30 +1,24 @@
 import React from 'react';
 import { Story, Meta } from '@storybook/react';
-import { BufferInfo } from 'components/BufferInfo';
+import { Memoized } from 'components/BufferInfo';
 
 export default {
   title: 'Example/BufferInfo/BufferInfo',
-  component: BufferInfo,
+  component: Memoized,
 } as Meta;
 
-const Template: Story<PropType<typeof BufferInfo>> = (props) => (
-  <BufferInfo {...props} />
+const Template: Story<PropType<typeof Memoized>> = (props) => (
+  <Memoized {...props} />
 );
 
 export const UnchangedBufferInfo = Template.bind({});
 UnchangedBufferInfo.args = {
-  buffer: {
-    path: '/foo/bar.md',
-    body: 'test',
-  },
+  path: '/foo/bar.md',
   changed: false,
 };
 
 export const ChangedBufferInfo = Template.bind({});
 ChangedBufferInfo.args = {
-  buffer: {
-    path: '/foo/bar.md',
-    body: 'test',
-  },
+  path: '/foo/bar.md',
   changed: true,
 };

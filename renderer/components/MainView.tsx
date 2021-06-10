@@ -1,4 +1,4 @@
-import { BufferInfoWC } from './BufferInfo';
+import { BufferInfo } from './BufferInfo';
 import { Editor } from './Editor';
 import { FileView } from './FileView';
 import { HotKeysEffect } from './HotKeys';
@@ -35,7 +35,7 @@ export function MainView(_: MainViewProps) {
               defaultSize="80vh"
             >
               <div className="w-full h-full overflow-hidden">
-                <BufferInfoWC />
+                <BufferInfo />
                 <Preview />
               </div>
               <div className="w-full h-full">
