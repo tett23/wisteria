@@ -70,7 +70,6 @@ app.on('ready', async () => {
     webPreferences: {
       nodeIntegration: false,
       contextIsolation: true,
-      worldSafeExecuteJavaScript: true,
       nativeWindowOpen: true,
       nodeIntegrationInWorker: true,
       preload: join(__dirname, 'preload.js'),
