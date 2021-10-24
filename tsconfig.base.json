@@ -29,6 +29,6 @@
       "stories*": ["stories*"],
     }
   },
-  "exclude": ["node_modules", "tmp", "dist", "main", "renderer/.next/", "renderer/out/", "out"],
+  "exclude": ["node_modules", "tmp", "dist", "main", "renderer/.next/", "renderer/out/", "out", "__tests__"],
   "include": ["**/*.ts", "**/*.tsx", "**/*.js"]
 }

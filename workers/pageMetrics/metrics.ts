@@ -1,4 +1,17 @@
-export function metrics({
+export function metrics(): (props: {
+  blocks: number[];
+  pageWidth: number;
+}) => Uint16Array {
+  let last: null | number[] = null;
+
+  return (props: { blocks: number[]; pageWidth: number }): Uint16Array => {
+    console.log('call page metrics', last);
+    last = props.blocks;
+    return metrics2(props);
+  };
+}
+
+export function metrics2({
   blocks,
   pageWidth,
 }: {
@@ -84,3 +97,5 @@ function pageMetrics({
     },
   });
 }
+
+// 箱書きから本文ファイルを生成したい
