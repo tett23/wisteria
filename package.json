@@ -13,7 +13,7 @@
     "build-workers:pageMetrics": "yarn run esbuild ./workers/pageMetrics --bundle --format=cjs --outfile=main/workers/pageMetrics/index.js",
     "pack-app:x64-mac": "npm run build && electron-builder --dir --mac --x64",
     "dist": "npm run build && electron-builder",
-    "type-check": "tsc",
+    "lint": "tsc --noEmit",
     "storybook": "start-storybook -p 6006",
     "build-storybook": "build-storybook"
   },
