@@ -75,5 +75,8 @@
       "main",
       "renderer/out"
     ]
+  },
+  "volta": {
+    "node": "16.10.0"
   }
 }
