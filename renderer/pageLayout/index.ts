@@ -2,16 +2,11 @@ import { normalize } from '@kindlize/normalize';
 import {
   toBox,
   toNormalizedBoxContent,
-  intoRectBox,
+  calcBoxPosition,
   intoSizedBox,
+  getPosition,
 } from './box';
-import {
-  ExtractNodeType,
-  NormalizedBoxAst,
-  NormalizedRectBox,
-  Size,
-  Position,
-} from './boxAst';
+import { Size, Position, BoxAst } from './boxAst';
 import { getContext } from './context';
 
 type Options = {
@@ -53,10 +48,7 @@ export function pageLayout(
   return canvas.toDataURL();
 }
 
-function build(
-  text: string,
-  options: { mmPx: number },
-): NormalizedRectBox | null {
+function build(text: string, options: { mmPx: number }): BoxAst | null {
   if (global.document == null) {
     return null;
   }
@@ -80,35 +72,22 @@ function build(
   } as any);
 
   const boxAst = toBox(context, ast);
-  const normalizedAst: ExtractNodeType<
-    NormalizedBoxAst,
-    'root'
-  > = toNormalizedBoxContent(boxAst);
-  const sized = intoSizedBox(normalizedAst);
 
-  return intoRectBox(sized);
+  return [toNormalizedBoxContent, intoSizedBox, calcBoxPosition].reduce(
+    (acc, f) => f(acc),
+    boxAst,
+  );
 }
 
 function renderToCanvas(
   context: CanvasRenderingContext2D,
   parent: Position,
-  node: NormalizedRectBox,
+  node: BoxAst,
 ): void {
-  const pos = addPosition(parent, node.data.rect);
+  const pos = addPosition(parent, getPosition(node));
   switch (node.type) {
     case 'root':
-      return node.children.forEach((item) =>
-        renderToCanvas(context, pos, item),
-      );
     case 'frame':
-      return node.children.forEach((item) =>
-        renderToCanvas(context, pos, item),
-      );
-    case 'block':
-      return node.children.forEach((item) =>
-        renderToCanvas(context, pos, item),
-      );
-    case 'inline':
       return node.children.forEach((item) =>
         renderToCanvas(context, pos, item),
       );

@@ -5,22 +5,32 @@ import {
   DeepExclude,
   Direction,
   ExtractNodeType,
-  NormalizedBoxAst,
-  NormalizedRectBox,
-  NormalizedSizedBox,
+  isParent,
+  Position,
   Rect,
   Size,
+  UnwrapArray,
 } from './boxAst';
 import { Context } from './context';
 
 export function toBox(context: Context, ntast: Ntast): BoxAstNode<'root'> {
   return {
     type: 'root',
-    data: { direction: context.direction, size: context.pageSize },
+    data: {
+      direction: context.direction,
+      size: context.pageSize,
+      position: PositionIdentity,
+    },
     children: [
       {
         type: 'frame',
-        data: { direction: context.direction, rect: RectIdentity },
+        boxType: 'frame',
+        data: {
+          direction: context.direction,
+          size: SizeIdentity,
+          position: PositionIdentity,
+          overflow: 'hidden',
+        },
         children: ntast.children.map((v: any) => toBox2(context, v)),
       },
     ],
@@ -31,14 +41,26 @@ export function toBox2(context: Context, ntast: Ntast): BoxAst {
   switch (ntast.type) {
     case 'paragraph':
       return {
-        type: 'block',
-        data: { direction: context.direction },
+        type: 'frame',
+        boxType: 'block',
+        data: {
+          direction: context.direction,
+          overflow: 'resize',
+          size: SizeIdentity,
+          position: PositionIdentity,
+        },
         children: ntast.children.map((v: any) => toBox2(context, v)),
       };
     case 'text':
       return {
-        type: 'inline',
-        data: { direction: context.direction },
+        type: 'frame',
+        boxType: 'block',
+        data: {
+          direction: context.direction,
+          overflow: 'resize',
+          size: SizeIdentity,
+          position: PositionIdentity,
+        },
         children: ntast.value.split('').map((c: string) => ({
           type: 'text',
           data: { direction: context.direction, size: context.toSize(c) },
@@ -47,18 +69,31 @@ export function toBox2(context: Context, ntast: Ntast): BoxAst {
       };
     case 'break':
       return {
-        type: 'block',
-        data: { direction: context.direction },
+        type: 'frame',
+        boxType: 'block',
+        data: {
+          direction: context.direction,
+          overflow: 'resize',
+          size: SizeIdentity,
+          position: PositionIdentity,
+        },
         children: [
           {
-            type: 'inline',
-            data: { direction: context.direction },
+            type: 'frame',
+            boxType: 'inline',
+            data: {
+              direction: context.direction,
+              overflow: 'resize',
+              size: SizeIdentity,
+              position: PositionIdentity,
+            },
             children: [
               {
                 type: 'text',
                 data: {
                   direction: context.direction,
                   size: context.toSize('\n'),
+                  position: PositionIdentity,
                 },
                 value: '\n',
               },
@@ -71,8 +106,7 @@ export function toBox2(context: Context, ntast: Ntast): BoxAst {
   }
 }
 
-function intoSize(node: BoxAst): Size {
-  // return collectSize(node).reduce(addSize, SizeIdentity);
+function calcSize(node: BoxAst): Size {
   switch (node.type) {
     case 'root':
       return { ...node.data.size };
@@ -80,255 +114,222 @@ function intoSize(node: BoxAst): Size {
       return SizeIdentity;
     case 'identity':
       return SizeIdentity;
-    case 'frame':
-      return { width: node.data.rect.width, height: node.data.rect.height };
-    case 'block': {
-      const sizes = node.children.map(intoSize);
-      const addHandler =
-        node.data.direction === 'horizontal-tb'
-          ? addSizeVertical
-          : addSizeHorizontal;
-      return sizes.reduce(addHandler, SizeIdentity);
-    }
-    case 'inline': {
-      const sizes = node.children.map(intoSize);
-      const addHandler =
-        node.data.direction === 'horizontal-tb'
-          ? addSizeHorizontal
-          : addSizeVertical;
-      return sizes.reduce(addHandler, SizeIdentity);
+    case 'frame': {
+      switch (node.boxType) {
+        case 'frame': {
+          return node.data.size;
+        }
+        case 'block': {
+          return node.children
+            .map(calcSize)
+            .reduce(addSize(node.data.direction), SizeIdentity);
+        }
+        case 'inline': {
+          return node.children
+            .map(calcSize)
+            .reduce(addSize(node.data.direction), SizeIdentity);
+        }
+      }
     }
     case 'text':
       return node.data.size;
   }
 }
 
-// function collectSize(node: BoxAst): Size[] {
-//   switch (node.type) {
-//     case 'root':
-//       return node.children.flatMap(collectSize);
-//     case 'fragment':
-//       return [SizeIdentity];
-//     case 'identity':
-//       return [SizeIdentity];
-//     case 'frame':
-//       return node.children.flatMap(collectSize);
-//     case 'block':
-//       return node.children.flatMap(collectSize);
-//     case 'inline':
-//       return node.children.flatMap(collectSize);
-//     case 'text':
-//       return [node.data.size];
-//   }
-// }
-
 const SizeIdentity: Size = Object.freeze({ width: 0, height: 0 });
 
-function addSizeVertical(left: Size, right: Size): Size {
-  return {
-    width: Math.max(left.width, right.width),
-    height: left.height + right.height,
-  };
-}
+// type Mappable<T> = {
+//   value: T;
+//   map: <U>(f: (a: T) => U) => Mappable<U>;
+//   unwrap: () => T;
+// };
 
-function addSizeHorizontal(left: Size, right: Size): Size {
-  return {
-    width: left.width + right.width,
-    height: Math.max(left.height, right.height),
-  };
-}
+// function newMapable<T>(value: T): Mappable<T> {
+//   return {
+//     value,
+//     map: <U>(f: (a: T) => U): Mappable<U> => newMapable(f(value)),
+//     unwrap: () => value,
+//   };
+// }
+
+const addSize = (dir: Direction) => (left: Size, right: Size): Size => {
+  switch (dir) {
+    case 'vertical-rl':
+      return {
+        width: Math.max(left.width, right.width),
+        height: left.height + right.height,
+      };
+    case 'horizontal-tb':
+      return {
+        width: left.width + right.width,
+        height: Math.max(left.height, right.height),
+      };
+  }
+};
 
 export function toNormalizedBoxContent<T extends BoxAst>(
   node: T,
 ): DeepExclude<T, 'fragment' | 'identity'> {
-  switch (node.type) {
-    case 'root':
-      return {
-        ...node,
-        children: node.children
-          .filter((item) => item.type !== 'identity')
-          .flatMap((item) =>
-            item.type === 'fragment'
-              ? item.children
-              : toNormalizedBoxContent(item),
-          ),
-      } as DeepExclude<T, 'fragment' | 'identity'>;
-    case 'frame':
-      return {
-        ...node,
-        children: node.children
-          .filter((item) => item.type !== 'identity')
-          .flatMap((item) =>
-            item.type === 'fragment'
-              ? item.children
-              : toNormalizedBoxContent(item),
-          ),
-      } as DeepExclude<T, 'fragment' | 'identity'>;
-    case 'block':
-      return {
-        ...node,
-        children: node.children
-          .filter((item) => item.type !== 'identity')
-          .flatMap((item) =>
-            item.type === 'fragment'
-              ? item.children
-              : toNormalizedBoxContent(item),
-          ),
-      } as DeepExclude<T, 'fragment' | 'identity'>;
-    case 'inline':
-      return {
-        ...node,
-        children: node.children
-          .filter((item) => item.type !== 'identity')
-          .flatMap((item) =>
-            item.type === 'fragment'
-              ? item.children
-              : toNormalizedBoxContent(item),
-          ),
-      } as DeepExclude<T, 'fragment' | 'identity'>;
-    case 'text':
-      return node as DeepExclude<T, 'fragment' | 'identity'>;
-    case 'fragment':
-      throw new Error();
-    case 'identity':
-      throw new Error();
+  return joinFragment(filterIdentity(node)) as DeepExclude<
+    T,
+    'fragment' | 'identity'
+  >;
+}
+
+function filterIdentity<T extends BoxAst>(node: T): DeepExclude<T, 'identity'> {
+  if (!isParent(node)) {
+    return node as DeepExclude<T, 'identity'>;
   }
+
+  return ({
+    ...node,
+    children: node.children
+      .filter(
+        <U extends BoxAst>(item: U): item is Exclude<U, { type: 'identity' }> =>
+          item.type !== 'identity',
+      )
+      .map(filterIdentity),
+  } as any) as DeepExclude<T, 'identity'>;
+}
+
+function joinFragment<T extends BoxAst>(node: T): DeepExclude<T, 'fragment'> {
+  if (!isParent(node)) {
+    return node as DeepExclude<T, 'fragment'>;
+  }
+
+  return ({
+    ...node,
+    children: node.children
+      .filter((a) => a)
+      .flatMap((item) => (item.type === 'fragment' ? item.children : item))
+      .map(joinFragment),
+  } as any) as DeepExclude<T, 'fragment'>;
 }
 
 export function intoSizedBox(
-  node: ExtractNodeType<NormalizedBoxAst, 'root'>,
-): ExtractNodeType<NormalizedSizedBox, 'root'> {
+  node: ExtractNodeType<BoxAst, 'root'>,
+): ExtractNodeType<BoxAst, 'root'> {
   return {
     ...node,
     data: {
       ...node.data,
-      size: intoSize(node),
+      size: calcSize(node),
     },
     children: node.children.map(intoSizedBox2),
-  } as ExtractNodeType<NormalizedSizedBox, 'root'>;
+  };
 }
 
-export function intoSizedBox2(node: NormalizedBoxAst): NormalizedSizedBox {
+export function intoSizedBox2<T extends BoxAst>(node: T): T {
   switch (node.type) {
     case 'root':
     case 'frame':
-    case 'block':
-    case 'inline':
       return {
         ...node,
         data: {
           ...node.data,
-          size: intoSize(node),
+          size: calcSize(node),
         },
         children: node.children.map(intoSizedBox2),
-      } as NormalizedSizedBox;
+      };
+    case 'identity':
+      return node;
+    case 'fragment':
+      return node;
     case 'text':
       return node;
   }
 }
 
-export function intoRectBox(
-  root: ExtractNodeType<NormalizedSizedBox, 'root'>,
-): ExtractNodeType<NormalizedRectBox, 'root'> {
+export function calcBoxPosition(
+  root: ExtractNodeType<BoxAst, 'root'>,
+): ExtractNodeType<BoxAst, 'root'> {
   return {
     ...root,
     data: {
       ...root.data,
-      rect: RectIdentity, // 変
+      position: PositionIdentity, // 変
     },
-    children: root.children.map((item, idx, arr) =>
-      intoRectBox2(arr[idx - 1]?.data.rect ?? RectIdentity, item),
+    children: root.children.reduce(
+      (acc: ExtractNodeType<BoxAst, 'root'>['children'], item, idx) => {
+        acc.push(calcBoxPosition2(getRect(acc[idx - 1]), item));
+
+        return acc;
+      },
+
+      [],
     ),
-  } as ExtractNodeType<NormalizedRectBox, 'root'>;
+  };
 }
 
-export function intoRectBox2(
-  leftRect: Rect,
-  node: NormalizedSizedBox,
-): NormalizedRectBox {
+export function calcBoxPosition2<T extends BoxAst>(leftRect: Rect, node: T): T {
   switch (node.type) {
     case 'root':
       return {
         ...node,
         data: {
           ...node.data,
-          rect: RectIdentity,
+          position: PositionIdentity,
         },
-        children: node.children.reduce(
-          (acc: NormalizedRectBox[], item, idx) => {
-            acc.push(
-              intoRectBox2(acc[idx - 1]?.data.rect ?? RectIdentity, item),
-            );
+        children: node.children.reduce((acc: BoxAst[], item, idx) => {
+          acc.push(calcBoxPosition2(getRect(acc[idx - 1]), item));
 
-            return acc;
-          },
-          [],
-        ),
-      } as ExtractNodeType<NormalizedRectBox, 'root'>;
+          return acc;
+        }, []),
+      };
     case 'frame':
-      return {
-        ...node,
-        data: {
-          ...node.data,
-          rect: RectIdentity,
-        },
-        children: node.children.reduce(
-          (acc: NormalizedRectBox[], item, idx) => {
-            acc.push(
-              intoRectBox2(acc[idx - 1]?.data.rect ?? RectIdentity, item),
-            );
+      switch (node.boxType) {
+        case 'frame':
+          return {
+            ...node,
+            data: {
+              ...node.data,
+              position: PositionIdentity,
+            },
+            children: node.children.reduce((acc: BoxAst[], item, idx) => {
+              acc.push(calcBoxPosition2(getRect(acc[idx - 1]), item));
 
-            return acc;
-          },
-          [],
-        ),
-      } as ExtractNodeType<NormalizedRectBox, 'frame'>;
-    case 'block':
-      return {
-        ...node,
-        data: {
-          ...node.data,
-          // rect: RectIdentity,
-          rect: addRectBlock(node.data.direction, leftRect, node.data.size),
-        },
-        children: node.children.reduce(
-          (acc: NormalizedRectBox[], item, idx) => {
-            acc.push(
-              intoRectBox2(acc[idx - 1]?.data.rect ?? RectIdentity, item),
-            );
+              return acc;
+            }, []),
+          };
+        case 'block':
+          return {
+            ...node,
+            data: {
+              ...node.data,
+              position: addPositionBlock(node.data.direction, leftRect),
+            },
+            children: node.children.reduce((acc: BoxAst[], item, idx) => {
+              acc.push(calcBoxPosition2(getRect(acc[idx - 1]), item));
 
-            return acc;
-          },
-          [],
-        ),
-      } as ExtractNodeType<NormalizedRectBox, 'block'>;
-    case 'inline':
-      return {
-        ...node,
-        data: {
-          ...node.data,
-          rect: RectIdentity,
-          // rect: addRectInline(node.data.direction, leftRect, node.data.size),
-        },
-        children: node.children.reduce(
-          (acc: NormalizedRectBox[], item, idx) => {
-            acc.push(
-              intoRectBox2(acc[idx - 1]?.data.rect ?? RectIdentity, item),
-            );
+              return acc;
+            }, []),
+          };
+        case 'inline':
+          return {
+            ...node,
+            data: {
+              ...node.data,
+              position: addPositionInline(node.data.direction, leftRect),
+            },
+            children: node.children.reduce((acc: BoxAst[], item, idx) => {
+              acc.push(calcBoxPosition2(getRect(acc[idx - 1]), item));
 
-            return acc;
-          },
-          [],
-        ),
-      } as ExtractNodeType<NormalizedRectBox, 'inline'>;
+              return acc;
+            }, []),
+          };
+      }
+    case 'fragment':
+      return node;
+    case 'identity':
+      return node;
     case 'text':
       return {
         ...node,
         data: {
           ...node.data,
-          rect: addRectInline(node.data.direction, leftRect, node.data.size),
+          position: addPositionInline(node.data.direction, leftRect),
         },
-      } as ExtractNodeType<NormalizedRectBox, 'text'>;
+      };
   }
 }
 
@@ -339,40 +340,59 @@ const RectIdentity: Rect = Object.freeze({
   height: 0,
 });
 
-function addRectBlock(direction: Direction, left: Rect, right: Size): Rect {
+function getRect(node: BoxAst | null | undefined): Rect {
+  if (node == null) {
+    return RectIdentity;
+  }
+  if (node.type === 'fragment' || node.type === 'identity') {
+    return RectIdentity;
+  }
+
+  return { ...node.data.position, ...node.data.size };
+}
+
+const PositionIdentity: Position = Object.freeze({
+  top: 0,
+  left: 0,
+});
+
+export function getPosition(node: BoxAst | null | undefined): Position {
+  if (node == null) {
+    return PositionIdentity;
+  }
+  if (node.type === 'fragment' || node.type === 'identity') {
+    return PositionIdentity;
+  }
+
+  return node.data.position;
+}
+
+function addPositionBlock(direction: Direction, left: Rect): Position {
   switch (direction) {
     case 'horizontal-tb':
       return {
         top: left.top + left.height,
         left: 0,
-        width: right.width,
-        height: right.height,
       };
     case 'vertical-rl':
       return {
         top: left.top,
         left: 0,
-        width: right.width,
-        height: right.height,
       };
   }
 }
 
-function addRectInline(direction: Direction, left: Rect, right: Size): Rect {
+function addPositionInline(direction: Direction, left: Rect): Position {
   switch (direction) {
     case 'horizontal-tb':
       return {
         top: left.top,
         left: left.width + left.left,
-        width: right.width,
-        height: right.height,
       };
     case 'vertical-rl':
       return {
         top: left.top + left.height,
         left: left.width,
-        width: right.width,
-        height: right.height,
       };
   }
 }
