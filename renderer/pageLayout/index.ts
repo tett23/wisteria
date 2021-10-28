@@ -77,7 +77,7 @@ function build(text: string, options: Options): BoxAst | null {
     toNormalizedBoxContent,
     intoSizedBox,
     calcBoxPosition,
-    inlineOverflow,
+    // inlineOverflow,
   ].reduce((acc, f) => f(acc), boxAst);
 }
 

@@ -17,93 +17,66 @@ import { boxscript } from './boxscript';
 import { Context } from './context';
 
 export function toBox(context: Context, ntast: Ntast): BoxAstNode<'root'> {
-  return {
-    type: 'root',
-    data: {
+  return boxscript(
+    'root',
+    {
       direction: context.direction,
       size: context.pageSize,
       position: PositionIdentity,
     },
-    children: [
-      {
-        type: 'frame',
-        boxType: 'frame',
-        data: {
+    [
+      boxscript(
+        'frame',
+        {
           direction: context.direction,
           size: context.pageSize,
-          position: PositionIdentity,
           overflow: 'hidden',
         },
-        children: ntast.children.map((v: any) => toBox2(context, v)),
-      },
+        ntast.children.map((v: any) => toBox2(context, v)),
+      ),
     ],
-  };
+  );
 }
 
 export function toBox2(context: Context, node: Ntast): BoxAst {
   switch (node.type) {
     case 'paragraph':
-      return {
-        type: 'frame',
-        boxType: 'block',
-        data: {
-          direction: context.direction,
-          overflow: 'resize',
-          size: SizeIdentity,
-          position: PositionIdentity,
-        },
-        children: node.children.map((v: any) => toBox2(context, v)),
-      };
+      return boxscript(
+        'block',
+        { direction: context.direction },
+        node.children.map((v: any) => toBox2(context, v)),
+      );
     case 'text':
-      return {
-        type: 'frame',
-        boxType: 'inline',
-        data: {
-          direction: context.direction,
-          overflow: 'resize',
-          size: SizeIdentity,
-          position: PositionIdentity,
-        },
-        children: node.value.split('').map((c: string) => ({
-          type: 'text',
-          data: { direction: context.direction, size: context.toSize(c) },
-          value: c,
-        })),
-      };
+      return boxscript(
+        'inline',
+        { direction: context.direction },
+        node.value
+          .split('')
+          .map((c: string) =>
+            boxscript(
+              'text',
+              { direction: context.direction, size: context.toSize(c) },
+              c,
+            ),
+          ),
+      );
     case 'break':
-      return {
-        type: 'frame',
-        boxType: 'block',
-        data: {
+      return boxscript(
+        'block',
+        {
           direction: context.direction,
-          overflow: 'resize',
-          size: SizeIdentity,
-          position: PositionIdentity,
         },
-        children: [
-          {
-            type: 'frame',
-            boxType: 'inline',
-            data: {
-              direction: context.direction,
-              overflow: 'resize',
-              size: SizeIdentity,
-              position: PositionIdentity,
-            },
-            children: [
-              {
-                type: 'text',
-                data: {
-                  direction: context.direction,
-                  size: context.toSize('\n'),
-                  position: PositionIdentity,
-                },
-                value: '\n',
-              },
-            ],
-          },
+        [
+          boxscript('inline', { direction: context.direction }),
+          [
+            boxscript(
+              'text',
+              { direction: context.direction, size: context.toSize('\n') },
+              '\n',
+            ),
+          ],
         ],
-      };
+      );
     default:
       console.warn(node);
       return boxscript('identity');

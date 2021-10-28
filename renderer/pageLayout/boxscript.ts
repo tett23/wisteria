@@ -32,7 +32,11 @@ export function boxscript<T extends BoxAst['type'] | 'inline' | 'block'>(
       return {
         type: 'root',
         data: {
-          ...{ position: PositionIdentity, size: SizeIdentity },
+          ...{
+            position: PositionIdentity,
+            size: SizeIdentity,
+            direction: 'horizontal-tb',
+          },
           ...data,
         },
         children,
@@ -50,7 +54,12 @@ export function boxscript<T extends BoxAst['type'] | 'inline' | 'block'>(
         type: 'frame',
         boxType: 'frame',
         data: {
-          ...{ position: PositionIdentity, size: SizeIdentity },
+          ...{
+            position: PositionIdentity,
+            size: SizeIdentity,
+            direction: 'horizontal-tb',
+            overflow: 'hidden',
+          },
           ...data,
         },
         children,
@@ -60,7 +69,12 @@ export function boxscript<T extends BoxAst['type'] | 'inline' | 'block'>(
         type: 'frame',
         boxType: 'inline',
         data: {
-          ...{ position: PositionIdentity, size: SizeIdentity },
+          ...{
+            position: PositionIdentity,
+            size: SizeIdentity,
+            direction: 'horizontal-tb',
+            overflow: 'resize',
+          },
           ...data,
         },
         children,
@@ -70,13 +84,29 @@ export function boxscript<T extends BoxAst['type'] | 'inline' | 'block'>(
         type: 'frame',
         boxType: 'block',
         data: {
-          ...{ position: PositionIdentity, size: SizeIdentity },
+          ...{
+            position: PositionIdentity,
+            size: SizeIdentity,
+            direction: 'horizontal-tb',
+            overflow: 'resize',
+          },
           ...data,
         },
         children,
       } as BoxAstNode<T>;
     case 'text':
-      return { type: 'frame', data, children } as BoxAstNode<T>;
+      return {
+        type: 'text',
+        data: {
+          ...{
+            position: PositionIdentity,
+            size: SizeIdentity,
+            direction: 'horizontal-tb',
+          },
+          ...data,
+        },
+        value: children as any,
+      } as BoxAstNode<T>;
     default:
       throw new Error();
   }
