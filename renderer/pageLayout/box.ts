@@ -7,10 +7,13 @@ import {
   ExtractNodeType,
   isParent,
   Position,
+  PositionIdentity,
   Rect,
+  RectIdentity,
   Size,
-  UnwrapArray,
+  SizeIdentity,
 } from './boxAst';
+import { boxscript } from './boxscript';
 import { Context } from './context';
 
 export function toBox(context: Context, ntast: Ntast): BoxAstNode<'root'> {
@@ -37,8 +40,8 @@ export function toBox(context: Context, ntast: Ntast): BoxAstNode<'root'> {
   };
 }
 
-export function toBox2(context: Context, ntast: Ntast): BoxAst {
-  switch (ntast.type) {
+export function toBox2(context: Context, node: Ntast): BoxAst {
+  switch (node.type) {
     case 'paragraph':
       return {
         type: 'frame',
@@ -49,19 +52,19 @@ export function toBox2(context: Context, ntast: Ntast): BoxAst {
           size: SizeIdentity,
           position: PositionIdentity,
         },
-        children: ntast.children.map((v: any) => toBox2(context, v)),
+        children: node.children.map((v: any) => toBox2(context, v)),
       };
     case 'text':
       return {
         type: 'frame',
-        boxType: 'block',
+        boxType: 'inline',
         data: {
           direction: context.direction,
           overflow: 'resize',
           size: SizeIdentity,
           position: PositionIdentity,
         },
-        children: ntast.value.split('').map((c: string) => ({
+        children: node.value.split('').map((c: string) => ({
           type: 'text',
           data: { direction: context.direction, size: context.toSize(c) },
           value: c,
@@ -102,57 +105,50 @@ export function toBox2(context: Context, ntast: Ntast): BoxAst {
         ],
       };
     default:
-      return { type: 'identity' };
+      return boxscript('identity');
   }
 }
 
-function calcSize(node: BoxAst): Size {
+export const calcSize = (direction: Direction) => (node: BoxAst): Size => {
   switch (node.type) {
     case 'root':
       return { ...node.data.size };
     case 'fragment':
-      return SizeIdentity;
+      return node.children
+        .map(calcSize(direction))
+        .reduce(addSize(direction), SizeIdentity);
     case 'identity':
       return SizeIdentity;
     case 'frame': {
-      switch (node.boxType) {
-        case 'frame': {
+      switch (node.data.overflow) {
+        case 'hidden':
           return node.data.size;
-        }
-        case 'block': {
+        case 'resize':
           return node.children
-            .map(calcSize)
+            .map(calcSize(node.data.direction))
             .reduce(addSize(node.data.direction), SizeIdentity);
-        }
-        case 'inline': {
-          return node.children
-            .map(calcSize)
-            .reduce(addSize(node.data.direction), SizeIdentity);
-        }
       }
     }
     case 'text':
       return node.data.size;
   }
+};
+
+type Mappable<T> = {
+  value: T;
+  map: <U>(f: (a: T) => U) => Mappable<U>;
+  unwrap: () => T;
+};
+
+export function newMapable<T>(value: T): Mappable<T> {
+  return {
+    value,
+    map: <U>(f: (a: T) => U): Mappable<U> => newMapable(f(value)),
+    unwrap: () => value,
+  };
 }
 
-const SizeIdentity: Size = Object.freeze({ width: 0, height: 0 });
-
-// type Mappable<T> = {
-//   value: T;
-//   map: <U>(f: (a: T) => U) => Mappable<U>;
-//   unwrap: () => T;
-// };
-
-// function newMapable<T>(value: T): Mappable<T> {
-//   return {
-//     value,
-//     map: <U>(f: (a: T) => U): Mappable<U> => newMapable(f(value)),
-//     unwrap: () => value,
-//   };
-// }
-
-const addSize = (dir: Direction) => (left: Size, right: Size): Size => {
+export const addSize = (dir: Direction) => (left: Size, right: Size): Size => {
   switch (dir) {
     case 'vertical-rl':
       return {
@@ -213,7 +209,7 @@ export function intoSizedBox(
     ...node,
     data: {
       ...node.data,
-      size: calcSize(node),
+      size: calcSize(node.data.direction)(node),
     },
     children: node.children.map(intoSizedBox2),
   };
@@ -227,7 +223,7 @@ export function intoSizedBox2<T extends BoxAst>(node: T): T {
         ...node,
         data: {
           ...node.data,
-          size: calcSize(node),
+          size: calcSize(node.data.direction)(node),
         },
         children: node.children.map(intoSizedBox2),
       };
@@ -333,28 +329,16 @@ export function calcBoxPosition2<T extends BoxAst>(leftRect: Rect, node: T): T {
   }
 }
 
-const RectIdentity: Rect = Object.freeze({
-  top: 0,
-  left: 0,
-  width: 0,
-  height: 0,
-});
-
-function getRect(node: BoxAst | null | undefined): Rect {
+export function getRect(node: BoxAst | null | undefined): Rect {
   if (node == null) {
     return RectIdentity;
   }
-  if (node.type === 'fragment' || node.type === 'identity') {
+  if (node.type === 'identity' || node.type === 'fragment') {
     return RectIdentity;
   }
 
   return { ...node.data.position, ...node.data.size };
 }
-
-const PositionIdentity: Position = Object.freeze({
-  top: 0,
-  left: 0,
-});
 
 export function getPosition(node: BoxAst | null | undefined): Position {
   if (node == null) {
@@ -382,7 +366,7 @@ function addPositionBlock(direction: Direction, left: Rect): Position {
   }
 }
 
-function addPositionInline(direction: Direction, left: Rect): Position {
+export function addPositionInline(direction: Direction, left: Rect): Position {
   switch (direction) {
     case 'horizontal-tb':
       return {

@@ -6,6 +6,7 @@ import {
   intoSizedBox,
   getPosition,
 } from './box';
+import { inlineOverflow } from './inlineOverflow';
 import { Size, Position, BoxAst } from './boxAst';
 import { getContext } from './context';
 
@@ -73,10 +74,13 @@ function build(text: string, options: { mmPx: number }): BoxAst | null {
 
   const boxAst = toBox(context, ast);
 
-  return [toNormalizedBoxContent, intoSizedBox, calcBoxPosition].reduce(
-    (acc, f) => f(acc),
-    boxAst,
-  );
+  // TODO: position計算を独立させる。overflow計算にはpositionは必要ない
+  return [
+    toNormalizedBoxContent,
+    intoSizedBox,
+    calcBoxPosition,
+    inlineOverflow,
+  ].reduce((acc, f) => f(acc), boxAst);
 }
 
 function renderToCanvas(
@@ -87,6 +91,7 @@ function renderToCanvas(
   const pos = addPosition(parent, getPosition(node));
   switch (node.type) {
     case 'root':
+    case 'fragment':
     case 'frame':
       return node.children.forEach((item) =>
         renderToCanvas(context, pos, item),

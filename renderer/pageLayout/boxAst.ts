@@ -66,13 +66,15 @@ type Text = {
   value: string;
 };
 
-type Fragment = {
+export type Fragment = {
   type: 'fragment';
-  children: Array<Content>;
+  data: {};
+  children: Array<BoxAst>;
 };
 
 type Identity = {
   type: 'identity';
+  data: {};
 };
 
 export type Content = Frame | Text | Fragment | Identity;
@@ -138,10 +140,13 @@ export type ExtractNodeType<
 //   T extends NormalizedSizedBox['type']
 // > = Extract<NormalizedSizedBox, { type: T }>;
 
-export type BoxAstNode<T extends { type: string }['type']> = Extract<
-  BoxAst,
-  { type: T }
->;
+export type BoxAstNode<
+  T extends BoxAst['type'] | 'inline' | 'block'
+> = T extends 'inline'
+  ? Extract<BoxAst, { boxType: 'inline' }>
+  : T extends 'block'
+  ? Extract<BoxAst, { boxType: 'block' }>
+  : Extract<BoxAst, { type: T }>;
 // export type NotBoxAstNode<
 //   T extends (BoxAst | NormalizedBoxAst)['type']
 // > = Exclude<BoxAst | NormalizedBoxAst, { type: T }>;
@@ -150,11 +155,7 @@ export type BoxAstNode<T extends { type: string }['type']> = Extract<
 //   U extends (BoxAst | NormalizedBoxAst)['type']
 // > = Exclude<T, { type: U }>;
 
-type B<T extends BoxAst> = T extends { children: infer U }
-  ? { children: U }
-  : never;
-
-export function isParent<T extends BoxAst>(node: T): node is T & B<T> {
+export function isParent<T extends BoxAst>(node: T): node is T & Parent<T> {
   if (node == null) {
     return false;
   }
@@ -166,4 +167,46 @@ export function isParent<T extends BoxAst>(node: T): node is T & B<T> {
     typeof (node as any).type === 'string' &&
     Array.isArray((node as any).children)
   );
+}
+
+export const RectIdentity: Rect = Object.freeze({
+  top: 0,
+  left: 0,
+  width: 0,
+  height: 0,
+});
+
+export const SizeIdentity: Size = Object.freeze({ width: 0, height: 0 });
+
+export const PositionIdentity: Position = Object.freeze({
+  top: 0,
+  left: 0,
+});
+
+export interface Data {
+  [key: string]: unknown;
+}
+
+export interface Node<TData extends object = Data> {
+  type: string;
+  data?: TData | undefined;
+  position?: Position | undefined;
+}
+
+export type NodeData<TNode extends Node<object>> = TNode extends Node<
+  infer TData
+>
+  ? TData
+  : never;
+
+export interface Parent<
+  ChildNode extends Node<object> = Node,
+  TData extends object = NodeData<ChildNode>
+> extends Node<TData> {
+  children: ChildNode[];
+}
+
+export interface Literal<Value = unknown, TData extends object = Data>
+  extends Node<TData> {
+  value: Value;
 }
