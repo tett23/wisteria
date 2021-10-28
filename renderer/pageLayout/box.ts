@@ -105,6 +105,7 @@ export function toBox2(context: Context, node: Ntast): BoxAst {
         ],
       };
     default:
+      console.warn(node);
       return boxscript('identity');
   }
 }

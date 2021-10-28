@@ -22,17 +22,15 @@ export function pageLayout(
 ) {
   const ast = build(text, options);
   if (ast == null) {
-    console.log('null context');
+    console.error('null context');
     return null;
   }
-  console.log(ast);
-  console.log(options);
 
   // canvas.width = ast.data.size.width;
   // canvas.height = ast.data.size.height;
   const ctx = canvas.getContext('2d');
   if (ctx == null) {
-    console.log('null context');
+    console.error('null context');
     return null;
   }
   ctx.canvas.width = options.pageSize.width;
@@ -49,7 +47,7 @@ export function pageLayout(
   return canvas.toDataURL();
 }
 
-function build(text: string, options: { mmPx: number }): BoxAst | null {
+function build(text: string, options: Options): BoxAst | null {
   if (global.document == null) {
     return null;
   }
@@ -61,7 +59,7 @@ function build(text: string, options: { mmPx: number }): BoxAst | null {
 
   const context = getContext({
     direction: 'horizontal-tb',
-    pageSize: { width: 500, height: 500 },
+    pageSize: options.pageSize,
     canvasContext: ctx,
   });
 
