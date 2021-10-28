@@ -1,12 +1,14 @@
 import { normalize } from '@kindlize/normalize';
 import {
   toBox,
-  toNormalizedBoxContent,
-  calcBoxPosition,
-  intoSizedBox,
+  // intoSizedBox,
   getPosition,
 } from './box';
-import { inlineOverflow } from './inlineOverflow';
+import {
+  // toNormalizedBoxContent,
+  updatePosition,
+} from './updatePosition';
+// import { inlineOverflow } from './inlineOverflow';
 import { Size, Position, BoxAst } from './boxAst';
 import { getContext } from './context';
 
@@ -75,10 +77,10 @@ function build(text: string, options: Options): BoxAst | null {
 
   // TODO: position計算を独立させる。overflow計算にはpositionは必要ない
   return [
-    toNormalizedBoxContent,
-    intoSizedBox,
-    calcBoxPosition,
+    // toNormalizedBoxContent,
+    // intoSizedBox,
     // inlineOverflow,
+    updatePosition,
   ].reduce((acc, f) => f(acc), boxAst);
 }
 

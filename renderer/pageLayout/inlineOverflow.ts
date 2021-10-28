@@ -1,10 +1,12 @@
 import { BoxAst, BoxAstNode, Direction, Position } from './boxAst';
 import { boxscript } from './boxscript';
-import { newMapable, toNormalizedBoxContent, intoSizedBox2 } from './box';
+import { newMapable } from './box';
+import { toNormalizedBoxContent } from './toNormalizedBoxContent';
 import { calcSize } from './calcSize';
 import { addSize } from './addSize';
 import { boxAstUtilFindAndReplace } from './findAndReplace';
 import { Size } from 'electron';
+import { updateData } from './updateData';
 
 export function inlineOverflow(root: BoxAstNode<'root'>): BoxAstNode<'root'> {
   return replaceFrame(root) as BoxAstNode<'root'>;
@@ -20,7 +22,7 @@ function replaceFrame<T extends BoxAst>(node: T): T {
         ...node,
         children: [
           replaceInline(
-            updateData(node, { size: parent.data.size }),
+            updateData(node, { size: (parent as any).data.size }),
             boxscript('fragment', node.children),
           ),
         ],
@@ -120,13 +122,8 @@ function replaceInline(
         [boxscript('fragment')],
       ),
     )
-    .map((children) => children.map(intoSizedBox2))
     .map((children) => boxscript('fragment', children))
     .unwrap();
-}
-
-function updateData<T extends BoxAst>(node: T, data: Partial<T['data']>): T {
-  return { ...node, data: { ...node.data, ...data } };
 }
 
 // NOTE: Sizeでないといけない？

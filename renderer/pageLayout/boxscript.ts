@@ -80,9 +80,11 @@ export function boxscript<T extends BoxAst['type'] | 'inline' | 'block'>(
         data: {
           ...{
             position: PositionIdentity,
-            size: children
-              .map(calcSize(direction))
-              .reduce(addSize(direction), SizeIdentity),
+            size:
+              data.size ??
+              children
+                .map(calcSize(direction))
+                .reduce(addSize(direction), SizeIdentity),
             direction,
             overflow: 'resize',
           },
@@ -97,9 +99,11 @@ export function boxscript<T extends BoxAst['type'] | 'inline' | 'block'>(
         data: {
           ...{
             position: PositionIdentity,
-            size: children
-              .map(calcSize(direction))
-              .reduce(addSize(direction), SizeIdentity),
+            size:
+              data.size ??
+              children
+                .map(calcSize(direction))
+                .reduce(addSize(direction), SizeIdentity),
             direction,
             overflow: 'resize',
           },
@@ -117,7 +121,16 @@ export function boxscript<T extends BoxAst['type'] | 'inline' | 'block'>(
           },
           ...data,
         },
-        value: children as any,
+        value: (() => {
+          if (typeof a === 'string') {
+            return a;
+          }
+          if (typeof b === 'string') {
+            return b;
+          }
+
+          throw new Error();
+        })(),
       } as BoxAstNode<T>;
     default:
       throw new Error();
