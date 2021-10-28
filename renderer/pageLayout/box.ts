@@ -10,10 +10,9 @@ import {
   PositionIdentity,
   Rect,
   RectIdentity,
-  Size,
-  SizeIdentity,
 } from './boxAst';
 import { boxscript } from './boxscript';
+import { calcSize } from './calcSize';
 import { Context } from './context';
 
 export function toBox(context: Context, ntast: Ntast): BoxAstNode<'root'> {
@@ -61,52 +60,20 @@ export function toBox2(context: Context, node: Ntast): BoxAst {
           ),
       );
     case 'break':
-      return boxscript(
-        'block',
-        {
-          direction: context.direction,
-        },
-        [
-          boxscript('inline', { direction: context.direction }),
-          [
-            boxscript(
-              'text',
-              { direction: context.direction, size: context.toSize('\n') },
-              '\n',
-            ),
-          ],
-        ],
-      );
+      return boxscript('block', { direction: context.direction }, [
+        boxscript('inline', { direction: context.direction }, [
+          boxscript(
+            'text',
+            { direction: context.direction, size: context.toSize('\n') },
+            '\n',
+          ),
+        ]),
+      ]);
     default:
       console.warn(node);
       return boxscript('identity');
   }
 }
-
-export const calcSize = (direction: Direction) => (node: BoxAst): Size => {
-  switch (node.type) {
-    case 'root':
-      return { ...node.data.size };
-    case 'fragment':
-      return node.children
-        .map(calcSize(direction))
-        .reduce(addSize(direction), SizeIdentity);
-    case 'identity':
-      return SizeIdentity;
-    case 'frame': {
-      switch (node.data.overflow) {
-        case 'hidden':
-          return node.data.size;
-        case 'resize':
-          return node.children
-            .map(calcSize(node.data.direction))
-            .reduce(addSize(node.data.direction), SizeIdentity);
-      }
-    }
-    case 'text':
-      return node.data.size;
-  }
-};
 
 type Mappable<T> = {
   value: T;
@@ -121,21 +88,6 @@ export function newMapable<T>(value: T): Mappable<T> {
     unwrap: () => value,
   };
 }
-
-export const addSize = (dir: Direction) => (left: Size, right: Size): Size => {
-  switch (dir) {
-    case 'vertical-rl':
-      return {
-        width: Math.max(left.width, right.width),
-        height: left.height + right.height,
-      };
-    case 'horizontal-tb':
-      return {
-        width: left.width + right.width,
-        height: Math.max(left.height, right.height),
-      };
-  }
-};
 
 export function toNormalizedBoxContent<T extends BoxAst>(
   node: T,

@@ -1,4 +1,12 @@
-import { BoxAst, BoxAstNode, PositionIdentity, SizeIdentity } from './boxAst';
+import { addSize } from './addSize';
+import {
+  BoxAst,
+  BoxAstNode,
+  Direction,
+  PositionIdentity,
+  SizeIdentity,
+} from './boxAst';
+import { calcSize } from './calcSize';
 
 export function boxscript<T extends BoxAst['type'] | 'inline' | 'block'>(
   nodeType: T,
@@ -26,6 +34,7 @@ export function boxscript<T extends BoxAst['type'] | 'inline' | 'block'>(
 
     return [];
   })();
+  const direction: Direction = data.direction ?? 'horizontal-tb';
 
   switch (nodeType) {
     case 'root':
@@ -34,8 +43,8 @@ export function boxscript<T extends BoxAst['type'] | 'inline' | 'block'>(
         data: {
           ...{
             position: PositionIdentity,
-            size: SizeIdentity,
-            direction: 'horizontal-tb',
+            size: data.size,
+            direction,
           },
           ...data,
         },
@@ -56,8 +65,8 @@ export function boxscript<T extends BoxAst['type'] | 'inline' | 'block'>(
         data: {
           ...{
             position: PositionIdentity,
-            size: SizeIdentity,
-            direction: 'horizontal-tb',
+            size: data.size,
+            direction,
             overflow: 'hidden',
           },
           ...data,
@@ -71,8 +80,10 @@ export function boxscript<T extends BoxAst['type'] | 'inline' | 'block'>(
         data: {
           ...{
             position: PositionIdentity,
-            size: SizeIdentity,
-            direction: 'horizontal-tb',
+            size: children
+              .map(calcSize(direction))
+              .reduce(addSize(direction), SizeIdentity),
+            direction,
             overflow: 'resize',
           },
           ...data,
@@ -86,8 +97,10 @@ export function boxscript<T extends BoxAst['type'] | 'inline' | 'block'>(
         data: {
           ...{
             position: PositionIdentity,
-            size: SizeIdentity,
-            direction: 'horizontal-tb',
+            size: children
+              .map(calcSize(direction))
+              .reduce(addSize(direction), SizeIdentity),
+            direction,
             overflow: 'resize',
           },
           ...data,
@@ -100,8 +113,7 @@ export function boxscript<T extends BoxAst['type'] | 'inline' | 'block'>(
         data: {
           ...{
             position: PositionIdentity,
-            size: SizeIdentity,
-            direction: 'horizontal-tb',
+            direction,
           },
           ...data,
         },

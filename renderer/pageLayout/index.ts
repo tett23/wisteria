@@ -21,6 +21,7 @@ export function pageLayout(
   options: Options,
 ) {
   const ast = build(text, options);
+  console.log(ast);
   if (ast == null) {
     console.error('null context');
     return null;

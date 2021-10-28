@@ -1,12 +1,8 @@
 import { BoxAst, BoxAstNode, Direction, Position } from './boxAst';
 import { boxscript } from './boxscript';
-import {
-  newMapable,
-  toNormalizedBoxContent,
-  intoSizedBox2,
-  calcSize,
-  addSize,
-} from './box';
+import { newMapable, toNormalizedBoxContent, intoSizedBox2 } from './box';
+import { calcSize } from './calcSize';
+import { addSize } from './addSize';
 import { boxAstUtilFindAndReplace } from './findAndReplace';
 import { Size } from 'electron';
 
