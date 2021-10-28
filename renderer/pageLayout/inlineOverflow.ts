@@ -19,6 +19,7 @@ function replaceFrame<T extends BoxAst>(node: T): T {
     node,
     (item) => item.type === 'frame' && item.boxType === 'block',
     (node: BoxAstNode<'block'>, _, parent) => {
+      console.log({ parent });
       return {
         ...node,
         children: [

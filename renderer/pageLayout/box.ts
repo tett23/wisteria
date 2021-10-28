@@ -30,7 +30,7 @@ export function toBox(context: Context, ntast: Ntast): BoxAstNode<'root'> {
         boxType: 'frame',
         data: {
           direction: context.direction,
-          size: SizeIdentity,
+          size: context.pageSize,
           position: PositionIdentity,
           overflow: 'hidden',
         },
