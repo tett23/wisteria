@@ -70,20 +70,6 @@ export function toBox2(context: Context, node: Ntast): BoxAst {
   }
 }
 
-type Mappable<T> = {
-  value: T;
-  map: <U>(f: (a: T) => U) => Mappable<U>;
-  unwrap: () => T;
-};
-
-export function newMapable<T>(value: T): Mappable<T> {
-  return {
-    value,
-    map: <U>(f: (a: T) => U): Mappable<U> => newMapable(f(value)),
-    unwrap: () => value,
-  };
-}
-
 export function getRect(node: BoxAst | null | undefined): Rect {
   if (node == null) {
     return RectIdentity;

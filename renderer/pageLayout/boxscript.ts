@@ -129,7 +129,7 @@ export function boxscript<T extends BoxAst['type'] | 'inline' | 'block'>(
             return b;
           }
 
-          throw new Error();
+          throw new Error('');
         })(),
       } as BoxAstNode<T>;
     default:

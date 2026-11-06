@@ -1,14 +1,7 @@
 import { normalize } from '@kindlize/normalize';
-import {
-  toBox,
-  // intoSizedBox,
-  getPosition,
-} from './box';
-import {
-  // toNormalizedBoxContent,
-  updatePosition,
-} from './updatePosition';
-// import { inlineOverflow } from './inlineOverflow';
+import { toBox, getPosition } from './box';
+import { updatePosition } from './updatePosition';
+import { inlineOverflow } from './inlineOverflow';
 import { Size, Position, BoxAst } from './boxAst';
 import { getContext } from './context';
 
@@ -79,7 +72,7 @@ function build(text: string, options: Options): BoxAst | null {
   return [
     // toNormalizedBoxContent,
     // intoSizedBox,
-    // inlineOverflow,
+    inlineOverflow,
     updatePosition,
   ].reduce((acc, f) => f(acc), boxAst);
 }
@@ -98,6 +91,7 @@ function renderToCanvas(
         renderToCanvas(context, pos, item),
       );
     case 'text':
+      // console.log(node.value, pos);
       return context.fillText(node.value, pos.left, pos.top);
   }
 }

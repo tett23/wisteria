@@ -1,6 +1,6 @@
-import { BoxAst, BoxAstNode, Direction, Position } from './boxAst';
+import { BoxAst, BoxAstNode, Direction, Position, UnwrapArray } from './boxAst';
 import { boxscript } from './boxscript';
-import { newMapable } from './box';
+import { A, newA, newMapable } from './newMapable';
 import { toNormalizedBoxContent } from './toNormalizedBoxContent';
 import { calcSize } from './calcSize';
 import { addSize } from './addSize';
@@ -17,7 +17,6 @@ function replaceFrame<T extends BoxAst>(node: T): T {
     node,
     (item) => item.type === 'frame' && item.boxType === 'block',
     (node: BoxAstNode<'block'>, _, parent) => {
-      console.log({ parent });
       return {
         ...node,
         children: [
@@ -39,89 +38,14 @@ function replaceInline(
   const parentDirection = parent.data.direction;
   return newMapable(node.children)
     .map((item) => item.map(toNormalizedBoxContent))
-    .map((children) =>
-      children.reduce(
-        (acc, item) => {
-          const prev = acc[acc.length - 1];
-          if (prev == null) {
-            throw new Error();
-          }
-
-          const currentLineSize = calcSize(parentDirection)(prev);
-          const frameSize = calcSize(parentDirection)(
-            boxscript('fragment', acc),
-          );
-          const prevPos = ((): Position => {
-            switch (parentDirection) {
-              case 'horizontal-tb':
-                return {
-                  left: 0,
-                  top: frameSize.height,
-                };
-              case 'vertical-rl':
-                return {
-                  left: frameSize.width,
-                  top: 0,
-                };
-            }
-          })();
-          const itemSize = calcSize(parentDirection)(item);
-          const nextSize = addSize(parentDirection)(currentLineSize, itemSize);
-          const isOverflow = isIntersection(parentDirection)(
-            parentSize,
-            nextSize,
-          );
-          console.log(parentSize, nextSize);
-
-          if (isOverflow) {
-            console.log({ itemSize, currentLineSize, frameSize });
-            const newLine = boxscript('fragment', [
-              updateData(item, {
-                position: ((): Position => {
-                  switch (parentDirection) {
-                    case 'horizontal-tb':
-                      return {
-                        left: 0,
-                        top: frameSize.height,
-                      };
-                    case 'vertical-rl':
-                      return {
-                        left: frameSize.width,
-                        top: 0,
-                      };
-                  }
-                })(),
-              }),
-            ]);
-            acc.push(newLine);
-
-            return acc;
-          }
-
-          prev.children.push(
-            updateData(item, {
-              position: ((): Position => {
-                switch (parentDirection) {
-                  case 'horizontal-tb':
-                    return {
-                      left: currentLineSize.width,
-                      top: prevPos.top,
-                    };
-                  case 'vertical-rl':
-                    return {
-                      left: prevPos.left,
-                      top: currentLineSize.height,
-                    };
-                }
-              })(),
-            }),
-          );
-
-          return acc;
-        },
-        [boxscript('fragment')],
-      ),
-    )
+    .map((children: any[]) => {
+      return children
+        .reduce(
+          reduceInline(parentDirection, parentSize),
+          newA(boxscript('fragment')),
+        )
+        .unwrap().children;
+    })
     .map((children) => boxscript('fragment', children))
     .unwrap();
 }
@@ -138,4 +62,25 @@ const isIntersection = (dir: Direction) => (
     case 'vertical-rl':
       return left.height < right.height;
   }
+};
+
+const reduceInline = (direction: Direction, parentSize: Size) => (
+  acc: A<BoxAstNode<'fragment'>>,
+  item: UnwrapArray<BoxAstNode<'block'>['children']>,
+): A<BoxAstNode<'fragment'>> => {
+  const prevLine = acc.last();
+  const currentLineSize = prevLine.size(direction);
+  const frameSize = newA(boxscript('fragment', acc)).size(direction);
+  const itemSize = calcSize(direction)(item);
+  const nextSize = addSize(direction)(currentLineSize, itemSize);
+  const isOverflow = isIntersection(direction)(parentSize, nextSize);
+  // console.log(parentSize, nextSize);
+
+  if (isOverflow) {
+    // console.log({ itemSize, currentLineSize, frameSize });
+    const newLine = boxscript('fragment', [updateData(item, {})]);
+    return acc.push(newLine);
+  }
+
+  return acc.map((a) => newA(a).push(item).unwrap());
 };

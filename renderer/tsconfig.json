@@ -4,5 +4,5 @@
     "module": "esnext",
     "noEmit": true,
   },
-  "files": ["../types/messages.d.ts"],
+  "files": ["../types/messages.d.ts", "./pageLayout/newMapable.ts", "./pageLayout/toNormalizedBoxContent.ts", "./pageLayout/updatePosition.ts", "./pageLayout/updateData.ts", "./pageLayout/calcSize.ts", "./pageLayout/addSize.ts", "./pageLayout/inlineOverflow.ts"],
 }

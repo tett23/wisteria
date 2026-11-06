@@ -68,13 +68,13 @@ type Text = {
 
 export type Fragment = {
   type: 'fragment';
-  data: {};
+  data: Record<string, any>;
   children: Array<BoxAst>;
 };
 
 type Identity = {
   type: 'identity';
-  data: {};
+  data: Record<string, any>;
 };
 
 export type Content = Frame | Text | Fragment | Identity;
@@ -182,6 +182,13 @@ export const PositionIdentity: Position = Object.freeze({
   top: 0,
   left: 0,
 });
+
+export const IdentityNode: Identity = Object.freeze({
+  type: 'identity',
+  data: {},
+});
+
+export const DirectionDefault: Direction = 'horizontal-tb';
 
 export interface Data {
   [key: string]: unknown;
